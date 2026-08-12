@@ -1,6 +1,6 @@
-// Jawapan betul — case-insensitive, trim spaces
-const CORRECT_NAME = "aalaa' binti abdullah umar";
-const CORRECT_AGE  = "6";
+// Terima "aalaa" atau nama penuh — case-insensitive
+const CORRECT_NAMES = ["aalaa'", "aalaa", "alaa'", "alaa", "aalaa' binti abdullah umar"];
+const CORRECT_AGE   = "6";
 
 export function renderLogin(navigate) {
   return `
@@ -14,7 +14,7 @@ export function renderLogin(navigate) {
       <div class="login-card">
         <div class="login-field">
           <label>Nama penuh kamu:</label>
-          <input id="inp-name" type="text" placeholder="contoh: Aalaa' binti Abdullah Umar"
+          <input id="inp-name" type="text" placeholder="contoh: Aalaa'"
             autocomplete="off" autocorrect="off" spellcheck="false" />
         </div>
         <div class="login-field">
@@ -52,7 +52,7 @@ export function bindLogin(navigate) {
     const name = document.getElementById('inp-name').value.trim().toLowerCase();
     const err  = document.getElementById('login-error');
 
-    if (name === CORRECT_NAME && selectedAge === CORRECT_AGE) {
+    if (CORRECT_NAMES.includes(name) && selectedAge === CORRECT_AGE) {
       err.classList.add('hidden');
       navigate('home');
     } else {
