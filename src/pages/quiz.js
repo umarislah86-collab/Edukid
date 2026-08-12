@@ -1,4 +1,5 @@
 import { saveTopicResult } from '../data/progress.js';
+import { calcEarned, addBalance, recordEarned, getBalance } from '../data/screentime.js';
 
 // ─── Entry point ────────────────────────────────────────────────────────────
 export function renderQuiz(state, navigate) {
@@ -20,20 +21,34 @@ export function renderQuiz(state, navigate) {
 // ─── Controller ─────────────────────────────────────────────────────────────
 function initQuiz(state, navigate) {
   const questions = shuffle([...state.topic.questions]);
-  let current = 0;
+  let current  = 0;
   let correct  = 0;
+  const startTime = Date.now();
 
   function next(wasCorrect) {
     if (wasCorrect) correct++;
     current++;
     if (current < questions.length) renderQuestion();
     else {
-      const result = saveTopicResult(state.topic.id, correct, questions.length, {
+      const result        = saveTopicResult(state.topic.id, correct, questions.length, {
         subject:    state.subject,
         topicTitle: state.topic.title,
         grade:      state.grade
       });
-      navigate('result', { result: { correct, total: questions.length, ...result } });
+      const minutesEarned = calcEarned(result.stars);
+      const newBalance    = addBalance(minutesEarned);
+      const timeSpentMin  = Math.round((Date.now() - startTime) / 60000);
+      recordEarned({
+        topicTitle: state.topic.title,
+        subject:    state.subject,
+        grade:      state.grade,
+        stars:      result.stars,
+        minutesEarned, newBalance
+      });
+      navigate('result', {
+        result: { correct, total: questions.length, ...result,
+                  minutesEarned, newBalance, timeSpentMin }
+      });
     }
   }
 

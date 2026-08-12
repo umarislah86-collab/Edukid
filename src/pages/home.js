@@ -1,9 +1,17 @@
-import { CURRICULUM, getTopicsForSubject, getAllTopicsForSubject } from '../data/curriculum.js';
+import { CURRICULUM, getAllTopicsForSubject } from '../data/curriculum.js';
 import { getTotalStars, getStreakDays, getSubjectProgress } from '../data/progress.js';
+import { getBalance, syncBalanceFromCloud } from '../data/screentime.js';
 
 export function renderHome(state, navigate) {
-  const stars  = getTotalStars();
-  const streak = getStreakDays();
+  const stars   = getTotalStars();
+  const streak  = getStreakDays();
+  const balance = getBalance();
+
+  // sync cloud balance silently after render
+  syncBalanceFromCloud();
+
+  const balColor   = balance >= 60 ? '#2ECC71' : balance >= 30 ? '#FF8C42' : '#FF4D6D';
+  const balMsg     = balance >= 60 ? 'Banyak tu! 🎉' : balance >= 30 ? 'Okay! 👍' : balance > 0 ? 'Sikit lagi! 💪' : 'Kosong — Belajar dulu!';
 
   const subjectCards = Object.entries(CURRICULUM).map(([key, subj]) => {
     const allTopics = getAllTopicsForSubject(key);
@@ -21,7 +29,7 @@ export function renderHome(state, navigate) {
   }).join('');
 
   const gradeBtns = [
-    { key: 'tahun6', label: '6 Tahun' },
+    { key: 'tahun6',  label: '6 Tahun'  },
     { key: 'darjah1', label: 'Darjah 1' },
   ].map(g => `
     <button class="grade-btn ${state.grade === g.key ? 'active' : ''}" data-grade="${g.key}">
@@ -34,6 +42,17 @@ export function renderHome(state, navigate) {
         <img src="public/aalaa.jpg" alt="Aalaa'" class="home-photo" />
         <h1>Jom Belajar!</h1>
         <p>Semangat Aalaa'! Kita belajar hari ni 🌟</p>
+      </div>
+
+      <div class="screentime-widget">
+        <div class="st-left">
+          <span class="st-icon">📱</span>
+          <div>
+            <p class="st-label">Masa Bebas Terkumpul</p>
+            <p class="st-msg">${balMsg}</p>
+          </div>
+        </div>
+        <div class="st-balance" style="color:${balColor}">${balance} <span>minit</span></div>
       </div>
 
       <div class="stats-bar">

@@ -117,6 +117,40 @@
     .empty div { font-size: 48px; margin-bottom: 10px; }
 
     .loading { text-align: center; padding: 48px; color: var(--muted); font-size: 15px; }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .tab-btn {
+      padding: 10px 22px; border-radius: 50px; border: 2px solid #E0E0F0;
+      background: white; font-family: 'Nunito', sans-serif;
+      font-size: 14px; font-weight: 700; cursor: pointer; transition: all .15s;
+    }
+    .tab-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Screen time ── */
+    .st-big {
+      background: linear-gradient(135deg, #6C63FF, #A78BFA);
+      border-radius: var(--radius); padding: 28px 24px;
+      color: white; text-align: center; margin-bottom: 20px;
+    }
+    .st-big .val { font-size: 56px; font-weight: 800; }
+    .st-big .lbl { font-size: 14px; opacity: .85; margin-top: 4px; }
+    .st-actions { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items:center; }
+    .btn-spend {
+      padding: 12px 20px; border-radius: 12px; border: none;
+      font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700;
+      cursor: pointer; background: var(--orange); color: white;
+    }
+    .btn-spend:hover { opacity: .9; }
+    .st-custom { display:flex; gap:8px; align-items:center; }
+    .st-custom input {
+      width: 90px; padding: 11px 14px; border: 2px solid #E0E0F0;
+      border-radius: 12px; font-family:'Nunito',sans-serif; font-size:14px; outline:none;
+    }
+    .badge-earned { background:#E8FFF3; color:var(--green); }
+    .badge-spent  { background:#FFF3E8; color:var(--orange); }
   </style>
 </head>
 <body>
@@ -151,28 +185,35 @@
     <div class="stat-card"><div class="val" id="st-perfect">—</div><div class="lbl">100% Sempurna</div></div>
   </div>
 
-  <p class="section-title">Prestasi Mengikut Subjek</p>
-  <div class="subj-row" id="subj-row"></div>
-
-  <p class="section-title">Semua Rekod</p>
-  <div class="filter-row">
-    <select id="flt-subject">
-      <option value="">Semua Subjek</option>
-      <option value="bm">Bahasa Malaysia</option>
-      <option value="matematik">Matematik</option>
-      <option value="sains">Sains</option>
-    </select>
-    <select id="flt-grade">
-      <option value="">Semua Peringkat</option>
-      <option value="tahun6">6 Tahun</option>
-      <option value="darjah1">Darjah 1</option>
-    </select>
-    <input type="text" id="flt-search" placeholder="Cari topik..." />
-    <button class="btn-export" id="btn-export">⬇ Export CSV</button>
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="rekod">📋 Rekod Latihan</button>
+    <button class="tab-btn"       data-tab="screentime">📱 Masa Bebas</button>
   </div>
 
-  <div class="table-wrap">
-    <table id="records-table">
+  <!-- Tab: Rekod Latihan -->
+  <div class="tab-panel active" id="tab-rekod">
+    <p class="section-title">Prestasi Mengikut Subjek</p>
+    <div class="subj-row" id="subj-row"></div>
+
+    <p class="section-title">Semua Rekod</p>
+    <div class="filter-row">
+      <select id="flt-subject">
+        <option value="">Semua Subjek</option>
+        <option value="bm">Bahasa Malaysia</option>
+        <option value="matematik">Matematik</option>
+        <option value="sains">Sains</option>
+      </select>
+      <select id="flt-grade">
+        <option value="">Semua Peringkat</option>
+        <option value="tahun6">6 Tahun</option>
+        <option value="darjah1">Darjah 1</option>
+      </select>
+      <input type="text" id="flt-search" placeholder="Cari topik..." />
+      <button class="btn-export" id="btn-export">⬇ Export CSV</button>
+    </div>
+    <div class="table-wrap">
+      <table id="records-table">
       <thead>
         <tr>
           <th data-col="timestamp">Tarikh & Masa ↕</th>
@@ -189,11 +230,49 @@
       </tbody>
     </table>
   </div>
-</div>
+  </div><!-- end tab-rekod -->
+
+  <!-- Tab: Masa Bebas -->
+  <div class="tab-panel" id="tab-screentime">
+    <div class="st-big">
+      <div class="val" id="st-bal">—</div>
+      <div class="lbl">minit masa bebas terkumpul</div>
+    </div>
+
+    <p class="section-title">Guna Masa Bebas</p>
+    <div class="st-actions">
+      <button class="btn-spend" data-min="30">▶ Guna 30 minit</button>
+      <button class="btn-spend" data-min="60">▶ Guna 1 jam</button>
+      <div class="st-custom">
+        <input type="number" id="custom-min" placeholder="minit" min="1" />
+        <button class="btn-spend" id="btn-custom-spend">▶ Guna</button>
+      </div>
+    </div>
+
+    <p class="section-title">Rekod Masa Bebas</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tarikh & Masa</th>
+            <th>Jenis</th>
+            <th>Topik / Nota</th>
+            <th>Minit</th>
+            <th>Baki</th>
+          </tr>
+        </thead>
+        <tbody id="st-body">
+          <tr><td colspan="5" class="loading">⏳ Memuatkan...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- end tab-screentime -->
+
+</div><!-- end dashboard -->
 
 <script type="module">
 import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy }
+import { getFirestore, collection, getDocs, addDoc, doc, setDoc, getDoc, query, orderBy, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const ADMIN_PASSWORD = "AalaaAbah2024";
@@ -346,6 +425,91 @@ document.getElementById("btn-export").addEventListener("click", () => {
   a.href = URL.createObjectURL(blob);
   a.download = "rekod-aalaa.csv";
   a.click();
+});
+
+// ── Tabs ──────────────────────────────────────────────────────────
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+    if (btn.dataset.tab === "screentime") loadScreentime();
+  });
+});
+
+// ── Screen Time ───────────────────────────────────────────────────
+let stBalance = 0;
+
+async function loadScreentime() {
+  // get balance from Firestore meta doc
+  try {
+    const snap = await getDoc(doc(db, "edukid_meta", "screentime"));
+    stBalance  = snap.exists() ? (snap.data().balance || 0) : 0;
+  } catch { stBalance = 0; }
+  document.getElementById("st-bal").textContent = stBalance;
+
+  // load log
+  const q    = query(collection(db, "edukid_screentime"), orderBy("timestamp","desc"));
+  const snap = await getDocs(q);
+  const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  if (!rows.length) {
+    document.getElementById("st-body").innerHTML =
+      `<tr><td colspan="5" class="empty"><div>📭</div>Tiada rekod lagi.</td></tr>`;
+    return;
+  }
+
+  document.getElementById("st-body").innerHTML = rows.map(r => {
+    const ts    = r.timestamp?.seconds ? new Date(r.timestamp.seconds*1000).toLocaleString("ms-MY") : "—";
+    const isEarned = r.type === "earned";
+    const badge    = isEarned
+      ? `<span class="badge badge-earned">✅ Dapat</span>`
+      : `<span class="badge badge-spent">📺 Guna</span>`;
+    const topic  = r.topicTitle || r.note || "—";
+    const minVal = isEarned ? `+${r.minutesEarned}` : `-${r.minutesSpent}`;
+    const color  = isEarned ? "var(--green)" : "var(--orange)";
+    return `
+      <tr>
+        <td>${ts}</td>
+        <td>${badge}</td>
+        <td>${topic}</td>
+        <td style="font-weight:800;color:${color}">${minVal} min</td>
+        <td>${r.newBalance ?? "—"} min</td>
+      </tr>`;
+  }).join("");
+}
+
+// ── Spend buttons ─────────────────────────────────────────────────
+async function spendMinutes(min, note) {
+  const newBal = Math.max(0, stBalance - min);
+  stBalance    = newBal;
+  document.getElementById("st-bal").textContent = newBal;
+  try {
+    await addDoc(collection(db, "edukid_screentime"), {
+      type: "spent", minutesSpent: min, note, newBalance: newBal,
+      timestamp: serverTimestamp()
+    });
+    await setDoc(doc(db, "edukid_meta", "screentime"), {
+      balance: newBal, updatedAt: serverTimestamp()
+    });
+    loadScreentime();
+  } catch(e) { alert("Gagal simpan. Cuba lagi."); }
+}
+
+document.querySelectorAll(".btn-spend[data-min]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const min = Number(btn.dataset.min);
+    if (stBalance < min) { alert(`Baki tak cukup! Baki sekarang: ${stBalance} minit.`); return; }
+    if (confirm(`Guna ${min} minit untuk Aalaa'?`)) spendMinutes(min, `Masa bebas ${min} minit`);
+  });
+});
+
+document.getElementById("btn-custom-spend").addEventListener("click", () => {
+  const min = Number(document.getElementById("custom-min").value);
+  if (!min || min < 1) { alert("Masukkan bilangan minit yang sah."); return; }
+  if (stBalance < min) { alert(`Baki tak cukup! Baki sekarang: ${stBalance} minit.`); return; }
+  if (confirm(`Guna ${min} minit untuk Aalaa'?`)) spendMinutes(min, `Masa bebas ${min} minit`);
 });
 </script>
 </body>
