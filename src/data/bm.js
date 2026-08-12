@@ -1,5 +1,6 @@
 // Silibus KPM — Tahun 6 (Prasekolah) & Darjah 1
-// question types: mcq | match | arrange
+// question types: mcq | match | arrange | speak
+import { BM_TAHUN6, BM_DARJAH1, buildReadingSession } from './reading.js';
 
 // ─── BAHASA MALAYSIA ────────────────────────────────────────────────────────
 const BM = {
@@ -120,6 +121,15 @@ const BM = {
         ]},
       ]
     },
+    // ── Membaca Kuat ─────────────────────────────────────────────────────────
+    {
+      id: "bm-t6-membaca-kuat",
+      title: "Membaca Kuat",
+      icon: "🎤",
+      dynamic: true,
+      getQuestions: () => buildReadingSession(BM_TAHUN6),
+      questions: [],
+    },
   ],
 
   darjah1: [
@@ -227,6 +237,15 @@ const BM = {
         { type:"mcq", q:"'Ayah pulang dari kerja. Dia membawa roti.' Siapa yang membawa roti?", answer:"Ayah", options:["Ibu","Adik","Ayah","Abang"] },
         { type:"mcq", q:"'Pokok mangga itu tinggi dan rendang.' Bagaimana pokok mangga itu?", answer:"Tinggi dan rendang", options:["Pendek dan kecil","Tinggi dan rendang","Kecil dan layu","Rendah dan kurus"] },
       ]
+    },
+    // ── Membaca Kuat ─────────────────────────────────────────────────────────
+    {
+      id: "bm-d1-membaca-kuat",
+      title: "Membaca Kuat",
+      icon: "🎤",
+      dynamic: true,
+      getQuestions: () => buildReadingSession(BM_DARJAH1),
+      questions: [],
     },
   ]
 };

@@ -21,7 +21,7 @@ export function renderHome(state, navigate) {
       <div class="subject-card ${key}" data-subject="${key}">
         <div class="icon">${subj.icon}</div>
         <h2>${subj.label}</h2>
-        <p>${allTopics.length} topik · 6 tahun & D1</p>
+        <p>${allTopics.length} topik · 6 thn & D1</p>
         <div class="progress-bar">
           <div class="progress-fill" style="width:${pct}%"></div>
         </div>

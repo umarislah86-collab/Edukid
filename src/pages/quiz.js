@@ -62,6 +62,7 @@ function initQuiz(state, navigate) {
     switch (q.type) {
       case 'match':   body.innerHTML = buildMatch(q);   bindMatch(q, next);   break;
       case 'arrange': body.innerHTML = buildArrange(q); bindArrange(q, next); break;
+      case 'speak':   body.innerHTML = buildSpeak(q);   bindSpeak(q, next);   break;
       default:        body.innerHTML = buildMCQ(q);     bindMCQ(q, next);     break;
     }
   }
@@ -232,4 +233,107 @@ function shuffle(arr) {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
+}
+
+// ─── SPEAK (Baca Kuat — Web Speech API) ─────────────────────────────────────
+const LEVEL_LABEL = { 1:'2 suku kata', 2:'3 suku kata', 3:'4 suku kata', 4:'Baca ayat' };
+const LEVEL_LABEL_EN = { 1:'2 syllables', 2:'3 syllables', 3:'4 syllables', 4:'Read sentence' };
+
+function buildSpeak(q) {
+  const isEn    = q.lang === 'en';
+  const lvlLbl  = isEn ? (LEVEL_LABEL_EN[q.level]||'') : (LEVEL_LABEL[q.level]||'');
+  const tapLbl  = isEn ? 'Tap mic and read aloud' : 'Ketik mikrofon dan baca kuat-kuat';
+  const skipLbl = isEn ? 'Skip' : 'Langkau';
+  return `
+    <div class="question-card pop">
+      <p class="q-num">🎤 Baca Kuat — ${lvlLbl}</p>
+      <p class="speak-word" id="speak-word">${q.word}</p>
+    </div>
+    <div class="speak-controls">
+      <button class="speak-mic-btn" id="btn-mic">🎤</button>
+      <p class="speak-status" id="speak-status">${tapLbl}</p>
+    </div>
+    <div class="speak-heard-wrap hidden" id="speak-heard-wrap">
+      <p class="speak-heard-label">${isEn ? 'You said:' : 'Kamu sebut:'}</p>
+      <p class="speak-heard" id="speak-heard"></p>
+    </div>
+    <button class="btn-secondary" id="btn-speak-skip" style="margin-top:12px">${skipLbl}</button>`;
+}
+
+function bindSpeak(q, next) {
+  const isEn = q.lang === 'en';
+  const lang = isEn ? 'en-US' : 'ms-MY';
+
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    document.getElementById('speak-status').textContent =
+      isEn ? '⚠️ Browser not supported. Use Chrome.' : '⚠️ Guna Chrome atau Edge.';
+    document.getElementById('btn-mic').disabled = true;
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = null;
+  let listening    = false;
+
+  document.getElementById('btn-mic').addEventListener('click', () => {
+    if (listening) return;
+    listening   = true;
+    recognition = new SpeechRecognition();
+    recognition.lang        = lang;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 3;
+
+    const micBtn   = document.getElementById('btn-mic');
+    const statusEl = document.getElementById('speak-status');
+    micBtn.textContent   = '🔴';
+    micBtn.classList.add('listening');
+    statusEl.textContent = isEn ? 'Listening...' : 'Mendengar...';
+
+    recognition.start();
+
+    recognition.onresult = (e) => {
+      const alternatives = [...Array(e.results[0].length)]
+        .map((_, i) => e.results[0].item(i).transcript.toLowerCase().trim());
+
+      const target  = q.word.toLowerCase().trim();
+      // strip punctuation for comparison
+      const clean   = s => s.replace(/[.,!?]/g,'').trim();
+      const isRight = alternatives.some(a => clean(a) === clean(target) || similarity(clean(a), clean(target)) >= 0.75);
+
+      document.getElementById('speak-heard-wrap').classList.remove('hidden');
+      document.getElementById('speak-heard').textContent = alternatives[0];
+
+      micBtn.textContent = isRight ? '✅' : '❌';
+      micBtn.classList.remove('listening');
+      showToast(isRight
+        ? (isEn ? '✅ Well done!' : '✅ Bagus! Sebutan betul!')
+        : (isEn ? `❌ Answer: ${q.word}` : `❌ Jawapan: ${q.word}`),
+        isRight ? 'correct' : 'wrong');
+      setTimeout(() => next(isRight), 1600);
+      listening = false;
+    };
+
+    recognition.onerror = () => {
+      micBtn.textContent = '🎤';
+      micBtn.classList.remove('listening');
+      statusEl.textContent = isEn ? 'Could not hear. Try again.' : 'Tak dapat dengar. Cuba lagi.';
+      listening = false;
+    };
+
+    recognition.onend = () => { if (listening) { listening = false; } };
+  });
+
+  document.getElementById('btn-speak-skip').addEventListener('click', () => {
+    if (recognition) try { recognition.stop(); } catch(_) {}
+    next(false);
+  });
+}
+
+// simple similarity — levenshtein ratio
+function similarity(a, b) {
+  const m = a.length, n = b.length;
+  if (!m || !n) return 0;
+  const dp = Array.from({length:m+1}, (_,i) => Array.from({length:n+1}, (_,j) => i||j));
+  for (let i=1;i<=m;i++) for (let j=1;j<=n;j++)
+    dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1] : 1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return 1 - dp[m][n] / Math.max(m, n);
 }
