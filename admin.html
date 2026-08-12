@@ -155,27 +155,17 @@
 </head>
 <body>
 
-<!-- ── Login ── -->
-<div id="login-screen">
-  <h1>🔐 Admin Panel</h1>
-  <p>Jom Belajar — Rekod Aalaa'</p>
-  <div class="login-box">
-    <label>Kata laluan admin:</label>
-    <input type="password" id="inp-pw" placeholder="Masukkan kata laluan" />
-    <button class="btn" id="btn-login">Log Masuk</button>
-    <p class="err" id="login-err">❌ Kata laluan salah. Cuba lagi.</p>
-  </div>
-</div>
+<!-- ── Dashboard terus, tanpa login ── -->
 
 <!-- ── Dashboard ── -->
-<div id="dashboard">
+<div id="dashboard" style="display:block">
   <div class="dash-header">
     <img src="public/aalaa.jpg" alt="Aalaa'" />
     <div>
       <h1>Rekod Aalaa'</h1>
       <p id="dash-date">Memuatkan...</p>
     </div>
-    <button class="logout" id="btn-logout">Log Keluar</button>
+    <button class="logout" id="btn-logout" style="display:none">Log Keluar</button>
   </div>
 
   <div class="stats-row" id="stats-row">
@@ -275,7 +265,6 @@ import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/fire
 import { getFirestore, collection, getDocs, addDoc, doc, setDoc, getDoc, query, orderBy, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const ADMIN_PASSWORD = "AalaaAbah2024";
 
 const firebaseConfig = {
   apiKey:        "AIzaSyC6TbStfWv2lE3qvQxf8WMsUJNlhVMpc_Q",
@@ -295,21 +284,9 @@ const GRADE_LABEL = { tahun6: "6 Tahun", darjah1: "Darjah 1" };
 let allRecords = [];
 let sortCol = "timestamp", sortAsc = false;
 
-// ── Login ─────────────────────────────────────────────────────────
-document.getElementById("btn-login").addEventListener("click", tryLogin);
-document.getElementById("inp-pw").addEventListener("keydown", e => { if (e.key === "Enter") tryLogin(); });
-
-function tryLogin() {
-  const pw = document.getElementById("inp-pw").value;
-  if (pw === ADMIN_PASSWORD) {
-    document.getElementById("login-screen").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
-    document.getElementById("dash-date").textContent = "Hari ini: " + new Date().toLocaleDateString("ms-MY", { weekday:"long", year:"numeric", month:"long", day:"numeric" });
-    loadRecords();
-  } else {
-    document.getElementById("login-err").style.display = "block";
-  }
-}
+// ── Auto-load terus ───────────────────────────────────────────────
+document.getElementById("dash-date").textContent = "Hari ini: " + new Date().toLocaleDateString("ms-MY", { weekday:"long", year:"numeric", month:"long", day:"numeric" });
+loadRecords();
 
 document.getElementById("btn-logout").addEventListener("click", () => {
   document.getElementById("login-screen").style.display = "flex";
