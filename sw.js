@@ -1,4 +1,4 @@
-const CACHE = 'edukid-v5';
+const CACHE = 'edukid-v6';
 const ASSETS = [
   '/Edukid/',
   '/Edukid/index.html',
@@ -8,6 +8,9 @@ const ASSETS = [
   '/Edukid/src/data/curriculum.js',
   '/Edukid/src/data/bm.js',
   '/Edukid/src/data/math_sains.js',
+  '/Edukid/src/data/english.js',
+  '/Edukid/src/data/iqra.js',
+  '/Edukid/src/data/reading.js',
   '/Edukid/src/data/progress.js',
   '/Edukid/src/data/firestore.js',
   '/Edukid/src/data/screentime.js',

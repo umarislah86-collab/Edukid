@@ -236,18 +236,27 @@ function shuffle(arr) {
 }
 
 // ─── SPEAK (Baca Kuat — Web Speech API) ─────────────────────────────────────
-const LEVEL_LABEL = { 1:'2 suku kata', 2:'3 suku kata', 3:'4 suku kata', 4:'Baca ayat' };
+const LEVEL_LABEL    = { 1:'2 suku kata', 2:'3 suku kata', 3:'4 suku kata', 4:'Baca ayat' };
 const LEVEL_LABEL_EN = { 1:'2 syllables', 2:'3 syllables', 3:'4 syllables', 4:'Read sentence' };
+const LEVEL_LABEL_AR = { 1:'huruf', 2:'perkataan', 3:'frasa', 4:'ayat' };
 
 function buildSpeak(q) {
-  const isEn    = q.lang === 'en';
-  const lvlLbl  = isEn ? (LEVEL_LABEL_EN[q.level]||'') : (LEVEL_LABEL[q.level]||'');
-  const tapLbl  = isEn ? 'Tap mic and read aloud' : 'Ketik mikrofon dan baca kuat-kuat';
+  const isAr   = q.lang === 'ar';
+  const isEn   = q.lang === 'en';
+  const lvlMap = isAr ? LEVEL_LABEL_AR : isEn ? LEVEL_LABEL_EN : LEVEL_LABEL;
+  const lvlLbl = lvlMap[q.level] || '';
+  const tapLbl = isAr ? 'Ketik mikrofon dan baca kuat-kuat 🕌'
+               : isEn ? 'Tap mic and read aloud'
+               :        'Ketik mikrofon dan baca kuat-kuat';
   const skipLbl = isEn ? 'Skip' : 'Langkau';
+  const wordClass = isAr ? 'speak-word arabic-text' : 'speak-word';
+  const hintHtml = isAr && q.hint
+    ? `<p class="speak-hint">Rumi: <em>${q.hint}</em></p>` : '';
   return `
     <div class="question-card pop">
-      <p class="q-num">🎤 Baca Kuat — ${lvlLbl}</p>
-      <p class="speak-word" id="speak-word">${q.word}</p>
+      <p class="q-num">${isAr ? '🕌 Mengaji —' : '🎤 Baca Kuat —'} ${lvlLbl}</p>
+      <p class="${wordClass}" id="speak-word">${q.word}</p>
+      ${hintHtml}
     </div>
     <div class="speak-controls">
       <button class="speak-mic-btn" id="btn-mic">🎤</button>
@@ -261,8 +270,11 @@ function buildSpeak(q) {
 }
 
 function bindSpeak(q, next) {
+  const isAr = q.lang === 'ar';
   const isEn = q.lang === 'en';
-  const lang = isEn ? 'en-US' : 'ms-MY';
+  // Arabic speech recognition is unreliable on mobile; accept any attempt as correct
+  // so Aalaa' still gets rewarded for trying — teacher can assess live
+  const lang = isAr ? 'ar-SA' : isEn ? 'en-US' : 'ms-MY';
 
   if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
     document.getElementById('speak-status').textContent =
@@ -278,7 +290,7 @@ function bindSpeak(q, next) {
     if (listening) return;
     listening   = true;
     recognition = new SpeechRecognition();
-    recognition.lang        = lang;
+    recognition.lang           = lang;
     recognition.interimResults = false;
     recognition.maxAlternatives = 3;
 
@@ -294,10 +306,15 @@ function bindSpeak(q, next) {
       const alternatives = [...Array(e.results[0].length)]
         .map((_, i) => e.results[0].item(i).transcript.toLowerCase().trim());
 
-      const target  = q.word.toLowerCase().trim();
-      // strip punctuation for comparison
-      const clean   = s => s.replace(/[.,!?]/g,'').trim();
-      const isRight = alternatives.some(a => clean(a) === clean(target) || similarity(clean(a), clean(target)) >= 0.75);
+      let isRight;
+      if (isAr) {
+        // For Arabic, accept any non-empty speech — mic-based self-assessment
+        isRight = alternatives.some(a => a.length > 0);
+      } else {
+        const target = q.word.toLowerCase().trim();
+        const clean  = s => s.replace(/[.,!?]/g,'').trim();
+        isRight = alternatives.some(a => clean(a) === clean(target) || similarity(clean(a), clean(target)) >= 0.75);
+      }
 
       document.getElementById('speak-heard-wrap').classList.remove('hidden');
       document.getElementById('speak-heard').textContent = alternatives[0];
@@ -305,8 +322,8 @@ function bindSpeak(q, next) {
       micBtn.textContent = isRight ? '✅' : '❌';
       micBtn.classList.remove('listening');
       showToast(isRight
-        ? (isEn ? '✅ Well done!' : '✅ Bagus! Sebutan betul!')
-        : (isEn ? `❌ Answer: ${q.word}` : `❌ Jawapan: ${q.word}`),
+        ? (isAr ? '✅ Tahniah! Teruskan!' : isEn ? '✅ Well done!' : '✅ Bagus! Sebutan betul!')
+        : (isAr ? `❌ Cuba lagi: ${q.hint||q.word}` : isEn ? `❌ Answer: ${q.word}` : `❌ Jawapan: ${q.word}`),
         isRight ? 'correct' : 'wrong');
       setTimeout(() => next(isRight), 1600);
       listening = false;

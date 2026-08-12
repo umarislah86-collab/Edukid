@@ -173,11 +173,28 @@ body {
 .subject-card.matematik { border-color: var(--orange);  }
 .subject-card.sains     { border-color: var(--green);   }
 .subject-card.english   { border-color: #E91E8C;        }
+.subject-card.iqra      { border-color: #1ABC9C;        }
 
 .subject-card.bm        .progress-fill { background: var(--purple); }
 .subject-card.matematik .progress-fill { background: var(--orange);  }
 .subject-card.sains     .progress-fill { background: var(--green);   }
 .subject-card.english   .progress-fill { background: #E91E8C;        }
+.subject-card.iqra      .progress-fill { background: #1ABC9C;        }
+
+/* ── Arabic (Iqra) text ── */
+.arabic-text {
+  font-family: 'Amiri', 'Traditional Arabic', 'Arabic Typesetting', serif;
+  direction: rtl;
+  font-size: 48px !important;
+  line-height: 1.6;
+  letter-spacing: 0;
+  color: #1A5276;
+}
+.speak-hint {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
 
 /* ── Speak (Baca Kuat) ── */
 .speak-word {

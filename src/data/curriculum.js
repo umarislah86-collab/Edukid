@@ -1,8 +1,9 @@
 import { BM }              from './bm.js';
 import { MATEMATIK, SAINS } from './math_sains.js';
 import { ENGLISH }          from './english.js';
+import { IQRA }             from './iqra.js';
 
-export const CURRICULUM = { bm: BM, matematik: MATEMATIK, sains: SAINS, english: ENGLISH };
+export const CURRICULUM = { bm: BM, matematik: MATEMATIK, sains: SAINS, english: ENGLISH, iqra: IQRA };
 
 export function getTopicsForSubject(subject, grade) {
   const topics = CURRICULUM[subject]?.[grade] || [];
