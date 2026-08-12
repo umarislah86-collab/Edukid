@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -6,12 +6,12 @@ const firebaseConfig = {
   apiKey:            "AIzaSyC6TbStfWv2lE3qvQxf8WMsUJNlhVMpc_Q",
   authDomain:        "brain-refresh-db364.firebaseapp.com",
   projectId:         "brain-refresh-db364",
-  storageBucket:     "brain-refresh-db364.appspot.com",
-  messagingSenderId: "856031567438",
-  appId:             "1:856031567438:web:edukid"
+  storageBucket:     "brain-refresh-db364.firebasestorage.app",
+  messagingSenderId: "179174675906",
+  appId:             "1:179174675906:web:0d3bfb01216a1e78e8b25b"
 };
 
-const app = initializeApp(firebaseConfig, "edukid");
+const app = getApps().find(a => a.name === "edukid") || initializeApp(firebaseConfig, "edukid");
 const db  = getFirestore(app);
 
 // Save one quiz attempt
