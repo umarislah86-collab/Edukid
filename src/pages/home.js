@@ -31,9 +31,9 @@ export function renderHome(state, navigate) {
   return `
     <div class="screen active" id="screen-home">
       <div class="home-header">
-        <div class="mascot">🦉</div>
-        <h1>EduKid MY</h1>
-        <p>Belajar sambil bermain! 🌟</p>
+        <img src="public/aalaa.jpg" alt="Aalaa'" class="home-photo" />
+        <h1>Jom Belajar!</h1>
+        <p>Semangat Aalaa'! Kita belajar hari ni 🌟</p>
       </div>
 
       <div class="stats-bar">

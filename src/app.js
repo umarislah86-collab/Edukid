@@ -2,13 +2,14 @@ import { renderHome }   from './pages/home.js';
 import { renderTopics } from './pages/topics.js';
 import { renderQuiz }   from './pages/quiz.js';
 import { renderResult } from './pages/result.js';
+import { renderLogin, bindLogin }  from './pages/login.js';
 
 const state = {
-  screen:  'home',
-  subject: null,
-  grade:   'tahun6',   // 'tahun6' | 'darjah1'
-  topic:   null,
-  result:  null,
+  screen:   'login',
+  subject:  null,
+  grade:    'tahun6',
+  topic:    null,
+  result:   null,
 };
 
 function navigate(screen, extra = {}) {
@@ -19,10 +20,11 @@ function navigate(screen, extra = {}) {
 function render() {
   const app = document.getElementById('app');
   switch (state.screen) {
-    case 'home':   app.innerHTML = renderHome(state, navigate);   break;
-    case 'topics': app.innerHTML = renderTopics(state, navigate); break;
-    case 'quiz':   app.innerHTML = renderQuiz(state, navigate);   break;
-    case 'result': app.innerHTML = renderResult(state, navigate); break;
+    case 'login':  app.innerHTML = renderLogin(navigate); bindLogin(navigate); break;
+    case 'home':   app.innerHTML = renderHome(state, navigate);    break;
+    case 'topics': app.innerHTML = renderTopics(state, navigate);  break;
+    case 'quiz':   app.innerHTML = renderQuiz(state, navigate);    break;
+    case 'result': app.innerHTML = renderResult(state, navigate);  break;
   }
   bindEvents();
 }
@@ -34,27 +36,21 @@ function bindEvents() {
       render();
     });
   });
-
   document.querySelectorAll('.subject-card').forEach(card => {
-    card.addEventListener('click', () => {
-      navigate('topics', { subject: card.dataset.subject });
-    });
+    card.addEventListener('click', () => navigate('topics', { subject: card.dataset.subject }));
   });
-
   document.querySelectorAll('.topic-item').forEach(item => {
     item.addEventListener('click', () => {
       const topic = JSON.parse(item.dataset.topic);
       navigate('quiz', { topic });
     });
   });
-
   document.querySelectorAll('.back-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const dest = btn.dataset.dest || 'home';
       navigate(dest, dest === 'home' ? {} : { subject: state.subject });
     });
   });
-
   const retryBtn = document.getElementById('btn-retry');
   const homeBtn  = document.getElementById('btn-home');
   const nextBtn  = document.getElementById('btn-next');
@@ -66,6 +62,6 @@ function bindEvents() {
 document.addEventListener('DOMContentLoaded', () => {
   render();
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
+    navigator.serviceWorker.register('/Edukid/sw.js').catch(() => {});
   }
 });
