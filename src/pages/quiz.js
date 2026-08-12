@@ -28,7 +28,11 @@ function initQuiz(state, navigate) {
     current++;
     if (current < questions.length) renderQuestion();
     else {
-      const result = saveTopicResult(state.topic.id, correct, questions.length);
+      const result = saveTopicResult(state.topic.id, correct, questions.length, {
+        subject:    state.subject,
+        topicTitle: state.topic.title,
+        grade:      state.grade
+      });
       navigate('result', { result: { correct, total: questions.length, ...result } });
     }
   }
