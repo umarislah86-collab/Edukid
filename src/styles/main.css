@@ -107,17 +107,33 @@ body {
 .logout-btn:hover { border-color: var(--purple); color: var(--purple); }
 
 /* ── Tadika subject card colours ── */
-.subject-card.warna   { border-color: #FF6B9D; }
-.subject-card.bentuk  { border-color: #9B59B6; }
-.subject-card.nombor  { border-color: #3498DB; }
-.subject-card.haiwan  { border-color: #27AE60; }
-.subject-card.buah    { border-color: #E74C3C; }
+.subject-card.kira      { border-color: #3498DB; }
+.subject-card.warna     { border-color: #FF6B9D; }
+.subject-card.haiwan    { border-color: #27AE60; }
+.subject-card.padanan   { border-color: #9B59B6; }
+.subject-card.kenderaan { border-color: #E74C3C; }
 
-.subject-card.warna   .progress-fill { background: #FF6B9D; }
-.subject-card.bentuk  .progress-fill { background: #9B59B6; }
-.subject-card.nombor  .progress-fill { background: #3498DB; }
-.subject-card.haiwan  .progress-fill { background: #27AE60; }
-.subject-card.buah    .progress-fill { background: #E74C3C; }
+.subject-card.kira      .progress-fill { background: #3498DB; }
+.subject-card.warna     .progress-fill { background: #FF6B9D; }
+.subject-card.haiwan    .progress-fill { background: #27AE60; }
+.subject-card.padanan   .progress-fill { background: #9B59B6; }
+.subject-card.kenderaan .progress-fill { background: #E74C3C; }
+
+/* ── Emoji MCQ (tadika) ── */
+.q-text--emoji {
+  font-size: 52px !important;
+  letter-spacing: 6px;
+  line-height: 1.5;
+}
+.options-grid--emoji {
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.options-grid--emoji .option-btn {
+  font-size: 46px;
+  padding: 22px 8px;
+  line-height: 1.2;
+}
 .login-screen {
   justify-content: flex-start;
   align-items: center;

@@ -1,99 +1,115 @@
-// Belajar sambil main — Yah (3 tahun)
-// Semua MCQ 2 pilihan sahaja, mudah untuk budak kecil
+// Tadika games untuk Yah (3 tahun) — visual + emoji sahaja
+// Tiada teks dalam pilihan jawapan — semua emoji/gambar
+// Soalan dibaca kuat automatik via TTS (speechSynthesis)
 
+// Helper: shorthand untuk buat soalan
+const q = (display, readText, answer, options) => ({
+  type: 'mcq', q: display, readText, answer, options, emoji: true, autoRead: true,
+});
+
+// ─── 1. Kira-Kira ────────────────────────────────────────────────────────────
+// Kira emoji dalam soalan, pilih nombor yang betul
+const KIRA = {
+  label: 'Kira-Kira', icon: '🔢', color: '#3498DB',
+  tadika: [{
+    id: 'kira', title: 'Kira-Kira 🔢', icon: '🔢',
+    questions: [
+      q('🍎',                'Ada berapa epal?',         '1️⃣', ['1️⃣','2️⃣','3️⃣','4️⃣']),
+      q('🍌🍌',              'Ada berapa pisang?',        '2️⃣', ['1️⃣','2️⃣','3️⃣','4️⃣']),
+      q('🌟🌟🌟',            'Ada berapa bintang?',       '3️⃣', ['1️⃣','2️⃣','3️⃣','4️⃣']),
+      q('🐱🐱🐱🐱',          'Ada berapa kucing?',        '4️⃣', ['2️⃣','3️⃣','4️⃣','5️⃣']),
+      q('🎈🎈🎈🎈🎈',        'Ada berapa belon?',         '5️⃣', ['2️⃣','3️⃣','4️⃣','5️⃣']),
+      q('🦋🦋',              'Ada berapa rama-rama?',     '2️⃣', ['1️⃣','2️⃣','3️⃣','4️⃣']),
+      q('🍭🍭🍭',            'Ada berapa lolipop?',       '3️⃣', ['2️⃣','3️⃣','4️⃣','5️⃣']),
+      q('⭐⭐⭐⭐',           'Ada berapa bintang?',       '4️⃣', ['2️⃣','3️⃣','4️⃣','5️⃣']),
+      q('🐸',                'Ada berapa katak?',         '1️⃣', ['1️⃣','2️⃣','3️⃣','4️⃣']),
+      q('🍰🍰🍰🍰🍰',        'Ada berapa kek?',           '5️⃣', ['3️⃣','4️⃣','5️⃣','2️⃣']),
+    ]
+  }]
+};
+
+// ─── 2. Teka Warna ───────────────────────────────────────────────────────────
+// Tunjuk objek berwarna, pilih bulatan warna yang betul
 const WARNA = {
-  label: 'Warna-Warni', icon: '🎨', color: '#FF6B9D',
+  label: 'Teka Warna', icon: '🌈', color: '#FF6B9D',
   tadika: [{
-    id: 'warna', title: 'Warna-Warni 🎨', icon: '🎨',
+    id: 'warna', title: 'Teka Warna 🌈', icon: '🌈',
     questions: [
-      { type:'mcq', q:'Apa warna ini? 🔴', answer:'Merah', options:['Merah','Biru'] },
-      { type:'mcq', q:'Apa warna ini? 🔵', answer:'Biru', options:['Merah','Biru'] },
-      { type:'mcq', q:'Apa warna ini? 🟡', answer:'Kuning', options:['Kuning','Hijau'] },
-      { type:'mcq', q:'Apa warna ini? 🟢', answer:'Hijau', options:['Kuning','Hijau'] },
-      { type:'mcq', q:'Apa warna ini? 🟠', answer:'Oren', options:['Oren','Ungu'] },
-      { type:'mcq', q:'Apa warna ini? 🟣', answer:'Ungu', options:['Oren','Ungu'] },
-      { type:'mcq', q:'Apa warna ini? ⚫', answer:'Hitam', options:['Hitam','Putih'] },
-      { type:'mcq', q:'Apa warna ini? ⚪', answer:'Putih', options:['Hitam','Putih'] },
-      { type:'mcq', q:'Langit berwarna apa? 🌤️', answer:'Biru', options:['Biru','Merah'] },
-      { type:'mcq', q:'Rumput berwarna apa? 🌿', answer:'Hijau', options:['Hijau','Kuning'] },
+      q('🍎', 'Apa warna epal?',         '🔴', ['🔴','🟡','🔵','🟢']),
+      q('🌊', 'Apa warna laut?',          '🔵', ['🔴','🟡','🔵','🟢']),
+      q('🌿', 'Apa warna daun?',          '🟢', ['🔴','🟡','🔵','🟢']),
+      q('⭐', 'Apa warna bintang?',       '🟡', ['🔴','🟡','🔵','🟢']),
+      q('🍊', 'Apa warna buah oren?',     '🟠', ['🔴','🟠','🟢','🔵']),
+      q('🍇', 'Apa warna anggur?',        '🟣', ['🔴','🟡','🟣','🔵']),
+      q('☁️', 'Apa warna awan?',          '⚪', ['⚫','⚪','🔴','🔵']),
+      q('🍌', 'Apa warna pisang?',        '🟡', ['🔴','🟡','🔵','🟢']),
+      q('🍓', 'Apa warna strawberi?',     '🔴', ['🔴','🟡','🔵','🟢']),
+      q('🥦', 'Apa warna brokoli?',       '🟢', ['🔴','🟡','🔵','🟢']),
     ]
   }]
 };
 
-const BENTUK = {
-  label: 'Bentuk-Bentuk', icon: '⭕', color: '#9B59B6',
-  tadika: [{
-    id: 'bentuk', title: 'Bentuk-Bentuk ⭕', icon: '⭕',
-    questions: [
-      { type:'mcq', q:'Apa bentuk ini? ⭕', answer:'Bulat', options:['Bulat','Segi Empat'] },
-      { type:'mcq', q:'Apa bentuk ini? 🟥', answer:'Segi Empat', options:['Bulat','Segi Empat'] },
-      { type:'mcq', q:'Apa bentuk ini? 🔺', answer:'Segi Tiga', options:['Segi Tiga','Bintang'] },
-      { type:'mcq', q:'Apa bentuk ini? ⭐', answer:'Bintang', options:['Segi Tiga','Bintang'] },
-      { type:'mcq', q:'Apa bentuk ini? ♥️', answer:'Hati', options:['Hati','Bulat'] },
-      { type:'mcq', q:'Matahari berbentuk apa? ☀️', answer:'Bulat', options:['Bulat','Segi Tiga'] },
-      { type:'mcq', q:'Buku berbentuk apa? 📗', answer:'Segi Empat', options:['Segi Empat','Bulat'] },
-      { type:'mcq', q:'Bola berbentuk apa? ⚽', answer:'Bulat', options:['Bulat','Segi Empat'] },
-      { type:'mcq', q:'Pizza berbentuk apa? 🍕', answer:'Segi Tiga', options:['Segi Tiga','Segi Empat'] },
-      { type:'mcq', q:'Jam berbentuk apa? 🕐', answer:'Bulat', options:['Bulat','Bintang'] },
-    ]
-  }]
-};
-
-const NOMBOR = {
-  label: 'Nombor 1-5', icon: '🔢', color: '#3498DB',
-  tadika: [{
-    id: 'nombor', title: 'Nombor 1-5 🔢', icon: '🔢',
-    questions: [
-      { type:'mcq', q:'Ada berapa? 🍎', answer:'1', options:['1','2'] },
-      { type:'mcq', q:'Ada berapa? 🌟🌟', answer:'2', options:['2','3'] },
-      { type:'mcq', q:'Ada berapa? 🐱🐱🐱', answer:'3', options:['2','3'] },
-      { type:'mcq', q:'Ada berapa? 🍌🍌🍌🍌', answer:'4', options:['4','5'] },
-      { type:'mcq', q:'Ada berapa? ⭐⭐⭐⭐⭐', answer:'5', options:['4','5'] },
-      { type:'mcq', q:'Ada berapa? 🦋🦋', answer:'2', options:['1','2'] },
-      { type:'mcq', q:'Ada berapa? 🌈🌈🌈', answer:'3', options:['3','4'] },
-      { type:'mcq', q:'Ada berapa? 🎈🎈🎈🎈', answer:'4', options:['3','4'] },
-      { type:'mcq', q:'Ada berapa? 🍭', answer:'1', options:['1','3'] },
-      { type:'mcq', q:'Ada berapa? 🐸🐸🐸🐸🐸', answer:'5', options:['4','5'] },
-    ]
-  }]
-};
-
+// ─── 3. Haiwan & Bunyi ───────────────────────────────────────────────────────
+// Dengar bunyi atau baca clue, pilih haiwan yang betul (semua pilihan gambar emoji)
 const HAIWAN = {
-  label: 'Haiwan Comel', icon: '🐾', color: '#27AE60',
+  label: 'Haiwan & Bunyi', icon: '🐾', color: '#27AE60',
   tadika: [{
-    id: 'haiwan', title: 'Haiwan Comel 🐾', icon: '🐾',
+    id: 'haiwan', title: 'Haiwan & Bunyi 🐾', icon: '🐾',
     questions: [
-      { type:'mcq', q:'Haiwan apa ini? 🐶', answer:'Anjing', options:['Anjing','Kucing'] },
-      { type:'mcq', q:'Haiwan apa ini? 🐱', answer:'Kucing', options:['Anjing','Kucing'] },
-      { type:'mcq', q:'Haiwan apa ini? 🐘', answer:'Gajah', options:['Gajah','Singa'] },
-      { type:'mcq', q:'Haiwan apa ini? 🦁', answer:'Singa', options:['Gajah','Singa'] },
-      { type:'mcq', q:'Haiwan apa ini? 🐸', answer:'Katak', options:['Katak','Ikan'] },
-      { type:'mcq', q:'Haiwan apa ini? 🐟', answer:'Ikan', options:['Katak','Ikan'] },
-      { type:'mcq', q:'Haiwan apa ini? 🐮', answer:'Lembu', options:['Lembu','Ayam'] },
-      { type:'mcq', q:'Haiwan apa ini? 🐔', answer:'Ayam', options:['Lembu','Ayam'] },
-      { type:'mcq', q:'Haiwan apa ini? 🐰', answer:'Arnab', options:['Arnab','Itik'] },
-      { type:'mcq', q:'Haiwan apa ini? 🦆', answer:'Itik', options:['Arnab','Itik'] },
+      q('Moo! 🔊',        'Haiwan apa bunyi moo?',              '🐮', ['🐮','🐔','🐸','🐶']),
+      q('Kok-kok! 🔊',    'Haiwan apa bunyi kok kok?',          '🐔', ['🐮','🐔','🐸','🐶']),
+      q('Woof! 🔊',       'Haiwan apa bunyi woof?',             '🐶', ['🐮','🐔','🐸','🐶']),
+      q('Ribbit! 🔊',     'Haiwan apa duduk dalam kolam?',      '🐸', ['🐮','🐔','🐸','🐶']),
+      q('Meow! 🔊',       'Haiwan apa bunyi meow?',             '🐱', ['🐱','🐮','🐸','🐰']),
+      q('Roar! 🔊',       'Haiwan apa raja hutan?',             '🦁', ['🐮','🦁','🐸','🐶']),
+      q('Baa! 🔊',        'Haiwan apa bunyi baa baa?',          '🐑', ['🐑','🐮','🦁','🐸']),
+      q('Quack! 🔊',      'Haiwan apa bunyi quack?',            '🦆', ['🦆','🐔','🐸','🐱']),
+      q('Splash! 🌊',     'Haiwan apa berenang dalam laut?',    '🐟', ['🐸','🐟','🐶','🦋']),
+      q('Trumpet! 🎺',    'Haiwan paling besar ini!',           '🐘', ['🐱','🐶','🐸','🐘']),
     ]
   }]
 };
 
-const BUAH = {
-  label: 'Buah-buahan', icon: '🍎', color: '#E74C3C',
+// ─── 4. Cari Pasangan ────────────────────────────────────────────────────────
+// Soalan tunjuk satu emoji, pilih yang SAMA dari 4 pilihan (matching/recognition)
+const PADANAN = {
+  label: 'Cari Pasangan', icon: '🔍', color: '#9B59B6',
   tadika: [{
-    id: 'buah', title: 'Buah-buahan 🍎', icon: '🍎',
+    id: 'padanan', title: 'Cari Pasangan 🔍', icon: '🔍',
     questions: [
-      { type:'mcq', q:'Buah apa ini? 🍎', answer:'Epal', options:['Epal','Pisang'] },
-      { type:'mcq', q:'Buah apa ini? 🍌', answer:'Pisang', options:['Epal','Pisang'] },
-      { type:'mcq', q:'Buah apa ini? 🍊', answer:'Oren', options:['Oren','Anggur'] },
-      { type:'mcq', q:'Buah apa ini? 🍇', answer:'Anggur', options:['Oren','Anggur'] },
-      { type:'mcq', q:'Buah apa ini? 🍓', answer:'Strawberi', options:['Strawberi','Tembikai'] },
-      { type:'mcq', q:'Buah apa ini? 🍉', answer:'Tembikai', options:['Strawberi','Tembikai'] },
-      { type:'mcq', q:'Buah apa ini? 🥭', answer:'Mangga', options:['Mangga','Nanas'] },
-      { type:'mcq', q:'Buah apa ini? 🍍', answer:'Nanas', options:['Mangga','Nanas'] },
-      { type:'mcq', q:'Buah apa ini? 🍋', answer:'Limau', options:['Limau','Betik'] },
-      { type:'mcq', q:'Buah apa ini? 🍈', answer:'Betik', options:['Limau','Betik'] },
+      q('🐱', 'Mana yang sama dengan kucing ini?',    '🐱', ['🐶','🐱','🐸','🐮']),
+      q('🍎', 'Mana yang sama dengan epal ini?',      '🍎', ['🍌','🍎','🍊','🍇']),
+      q('🔴', 'Mana bulatan yang sama?',              '🔴', ['🔵','🟡','🔴','🟢']),
+      q('⭐', 'Mana yang sama dengan bintang ini?',   '⭐', ['☀️','⭐','🌙','🌟']),
+      q('🦁', 'Mana yang sama dengan singa ini?',     '🦁', ['🐯','🦁','🐮','🐘']),
+      q('🏠', 'Mana yang sama dengan rumah ini?',     '🏠', ['🌳','🏠','⛰️','🌊']),
+      q('🚗', 'Mana yang sama dengan kereta ini?',    '🚗', ['✈️','🚗','🚢','🚂']),
+      q('🌈', 'Mana yang sama dengan pelangi ini?',   '🌈', ['☁️','🌈','⛅','🌤️']),
+      q('🍌', 'Mana yang sama dengan pisang ini?',    '🍌', ['🍎','🍊','🍌','🍇']),
+      q('🐘', 'Mana yang sama dengan gajah ini?',     '🐘', ['🦁','🐸','🐶','🐘']),
     ]
   }]
 };
 
-export const TADIKA_CURRICULUM = { warna: WARNA, bentuk: BENTUK, nombor: NOMBOR, haiwan: HAIWAN, buah: BUAH };
+// ─── 5. Kenderaan ────────────────────────────────────────────────────────────
+// Kenderaan — toddlers SUKA vehicles! Pick the right vehicle from clues.
+const KENDERAAN = {
+  label: 'Kenderaan', icon: '🚗', color: '#E74C3C',
+  tadika: [{
+    id: 'kenderaan', title: 'Kenderaan 🚗', icon: '🚗',
+    questions: [
+      q('Terbang di langit! ✈️❓',     'Apa yang terbang di langit?',         '✈️', ['✈️','🚗','🚢','🚂']),
+      q('Berlayar di laut! 🌊❓',      'Apa yang berlayar di laut?',           '🚢', ['✈️','🚗','🚢','🚂']),
+      q('Jalan di landasan! 🛤️❓',    'Apa yang jalan atas landasan?',        '🚂', ['✈️','🚗','🚢','🚂']),
+      q('Jalan di jalan raya! 🛣️❓',  'Apa yang jalan di jalan raya?',        '🚗', ['✈️','🚗','🚢','🚂']),
+      q('Doktor naik apa? 🏥❓',       'Kenderaan kecemasan doktor apa?',      '🚑', ['🚑','🚒','🚓','🚁']),
+      q('Bomba naik apa? 🔥❓',        'Kenderaan bomba apa?',                 '🚒', ['🚑','🚒','🚓','🚁']),
+      q('Polis naik apa? 👮❓',        'Kenderaan polis apa?',                 '🚓', ['🚑','🚒','🚓','🚁']),
+      q('Baling-baling terbang! ❓',   'Helikopter mana satu?',               '🚁', ['🚑','🚒','🚓','🚁']),
+      q('Basikal ada berapa roda? ❓', 'Basikal ada berapa roda?',            '2️⃣', ['1️⃣','2️⃣','3️⃣','4️⃣']),
+      q('Kereta ada berapa roda? ❓',  'Kereta ada berapa roda?',             '4️⃣', ['1️⃣','2️⃣','3️⃣','4️⃣']),
+    ]
+  }]
+};
+
+export const TADIKA_CURRICULUM = { kira: KIRA, warna: WARNA, haiwan: HAIWAN, padanan: PADANAN, kenderaan: KENDERAAN };

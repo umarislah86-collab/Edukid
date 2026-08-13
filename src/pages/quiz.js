@@ -65,6 +65,16 @@ function initQuiz(state, navigate) {
       case 'speak':   body.innerHTML = buildSpeak(q);   bindSpeak(q, next);   break;
       default:        body.innerHTML = buildMCQ(q);     bindMCQ(q, next);     break;
     }
+
+    // Auto-read question aloud for tadika (non-reading kids)
+    if (q.autoRead && q.readText && 'speechSynthesis' in window) {
+      speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(q.readText);
+      utter.lang  = 'ms-MY';
+      utter.rate  = 0.82;
+      utter.pitch = 1.15;
+      setTimeout(() => speechSynthesis.speak(utter), 250);
+    }
   }
 
   renderQuestion();
@@ -72,14 +82,15 @@ function initQuiz(state, navigate) {
 
 // ─── MCQ ────────────────────────────────────────────────────────────────────
 function buildMCQ(q) {
-  const opts = shuffle([...q.options]);
+  const opts     = shuffle([...q.options]);
+  const isEmoji  = q.emoji;
   return `
     <div class="question-card pop">
-      <p class="q-num">Pilih jawapan yang betul</p>
+      <p class="q-num">${isEmoji ? '👆 Pilih yang betul!' : 'Pilih jawapan yang betul'}</p>
       ${q.img ? `<div class="q-img">${q.img}</div>` : ''}
-      <p class="q-text">${q.q}</p>
+      <p class="q-text${isEmoji ? ' q-text--emoji' : ''}">${q.q}</p>
     </div>
-    <div class="options-grid">
+    <div class="options-grid${isEmoji ? ' options-grid--emoji' : ''}">
       ${opts.map(o => `<button class="option-btn" data-answer="${o}">${o}</button>`).join('')}
     </div>`;
 }
@@ -99,7 +110,11 @@ function bindMCQ(q, next) {
         });
       }
       document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
-      showToast(isRight ? '✅ Betul! Bagus!' : '❌ Jawapan: ' + q.answer, isRight ? 'correct' : 'wrong');
+      if ('speechSynthesis' in window) speechSynthesis.cancel();
+      showToast(isRight
+        ? (q.emoji ? '🎉 Pandai! Betul!' : '✅ Betul! Bagus!')
+        : (q.emoji ? '💪 Cuba lagi sayang!' : '❌ Jawapan: ' + q.answer),
+        isRight ? 'correct' : 'wrong');
       setTimeout(() => next(isRight), 1400);
     });
   });

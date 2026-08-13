@@ -1,6 +1,6 @@
 const PROFILES = {
   aalaa: { id:'aalaa', name:"Aalaa'", age:6, photo:'public/aalaa.jpg', grade:'darjah1', curriculum:'main' },
-  yah:   { id:'yah',  name:'Yah',    age:3, photo:null,               grade:'tadika',  curriculum:'tadika' },
+  yah:   { id:'yah',  name:'Yah',    age:3, photo:'public/yah.jpg',   grade:'tadika',  curriculum:'tadika' },
 };
 
 const NAME_MAP = {
@@ -10,18 +10,17 @@ const NAME_MAP = {
 };
 
 export function renderLogin(navigate) {
+  const profilePicksHtml = Object.values(PROFILES).map(p => `
+    <div class="profile-pick" data-profile="${p.id}">
+      ${p.photo
+        ? `<img src="${p.photo}" alt="${p.name}" class="profile-pick-img" />`
+        : `<div class="profile-pick-emoji">👧</div>`}
+      <p>${p.name}</p>
+    </div>`).join('');
+
   return `
     <div class="screen active login-screen">
-      <div class="login-profiles">
-        <div class="profile-pick" data-profile="aalaa">
-          <img src="public/aalaa.jpg" alt="Aalaa'" class="profile-pick-img" />
-          <p>Aalaa'</p>
-        </div>
-        <div class="profile-pick" data-profile="yah">
-          <div class="profile-pick-emoji">👧</div>
-          <p>Yah</p>
-        </div>
-      </div>
+      <div class="login-profiles">${profilePicksHtml}</div>
       <h1 class="login-title">Jom Belajar! 🌟</h1>
       <p class="login-sub">Siapakah kamu? Eja nama kamu untuk masuk!</p>
 
