@@ -1,4 +1,4 @@
-const CACHE = 'edukid-v11';
+const CACHE = 'edukid-v12';
 const ASSETS = [
   '/Edukid/',
   '/Edukid/index.html',
@@ -20,6 +20,10 @@ const ASSETS = [
   '/Edukid/src/pages/quiz.js',
   '/Edukid/src/pages/result.js',
   '/Edukid/src/pages/login.js',
+  '/Edukid/public/betul-aalaa.mp3',
+  '/Edukid/public/betul_yah.mp3',
+  '/Edukid/public/salah_aalaa.mp3',
+  '/Edukid/public/salah_yah.mp3',
 ];
 
 self.addEventListener('install', e => {

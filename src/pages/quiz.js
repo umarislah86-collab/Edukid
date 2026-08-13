@@ -1,6 +1,18 @@
 import { saveTopicResult } from '../data/progress.js';
 import { calcEarned, addBalance, recordEarned, getBalance } from '../data/screentime.js';
 
+// ─── Audio feedback per profile ─────────────────────────────────────────────
+const FEEDBACK_AUDIO = {
+  aalaa: { betul: '/Edukid/public/betul-aalaa.mp3', salah: '/Edukid/public/salah_aalaa.mp3' },
+  yah:   { betul: '/Edukid/public/betul_yah.mp3',  salah: '/Edukid/public/salah_yah.mp3'   },
+};
+
+function playFeedback(profileId, isRight) {
+  const map = FEEDBACK_AUDIO[profileId] || FEEDBACK_AUDIO.aalaa;
+  const audio = new Audio(isRight ? map.betul : map.salah);
+  audio.play().catch(() => {});
+}
+
 // ─── Entry point ────────────────────────────────────────────────────────────
 export function renderQuiz(state, navigate) {
   setTimeout(() => initQuiz(state, navigate), 0);
@@ -64,11 +76,12 @@ function initQuiz(state, navigate) {
     document.getElementById('quiz-count').textContent = `${current + 1} / ${questions.length}`;
 
     const body = document.getElementById('quiz-body');
+    const pid  = state.profile?.id === 'yah' ? 'yah' : 'aalaa';
     switch (q.type) {
-      case 'match':   body.innerHTML = buildMatch(q);   bindMatch(q, next);   break;
-      case 'arrange': body.innerHTML = buildArrange(q); bindArrange(q, next); break;
-      case 'speak':   body.innerHTML = buildSpeak(q);   bindSpeak(q, next);   break;
-      default:        body.innerHTML = buildMCQ(q);     bindMCQ(q, next);     break;
+      case 'match':   body.innerHTML = buildMatch(q);   bindMatch(q, next, pid);   break;
+      case 'arrange': body.innerHTML = buildArrange(q); bindArrange(q, next, pid); break;
+      case 'speak':   body.innerHTML = buildSpeak(q);   bindSpeak(q, next, pid);   break;
+      default:        body.innerHTML = buildMCQ(q);     bindMCQ(q, next, pid);     break;
     }
 
     // Auto-read question aloud for tadika (non-reading kids)
@@ -97,7 +110,7 @@ function buildMCQ(q) {
     </div>`;
 }
 
-function bindMCQ(q, next) {
+function bindMCQ(q, next, profileId) {
   const replayBtn = document.getElementById('btn-replay');
   if (replayBtn) replayBtn.addEventListener('click', () => autoSpeak(q.readText));
 
@@ -116,6 +129,7 @@ function bindMCQ(q, next) {
       }
       document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
       if ('speechSynthesis' in window) speechSynthesis.cancel();
+      playFeedback(profileId, isRight);
       showToast(isRight
         ? (q.emoji ? '🎉 Pandai! Betul!' : '✅ Betul! Bagus!')
         : (q.emoji ? '💪 Cuba lagi sayang!' : '❌ Jawapan: ' + q.answer),
@@ -146,7 +160,7 @@ function buildMatch(q) {
     <p class="match-hint">Ketik kiri, kemudian ketik kanan untuk padan.</p>`;
 }
 
-function bindMatch(q, next) {
+function bindMatch(q, next, profileId) {
   const pairMap = {};
   q.pairs.forEach(p => { pairMap[p.left] = p.right; });
 
@@ -176,6 +190,7 @@ function bindMatch(q, next) {
         leftBtn?.classList.add('correct', 'done');
         matched++;
         if (matched === total) {
+          playFeedback(profileId, true);
           showToast('✅ Cantik! Semua betul!', 'correct');
           setTimeout(() => next(true), 1200);
         }
@@ -209,7 +224,7 @@ function buildArrange(q) {
     <button class="btn-primary" id="arrange-check" style="margin-top:16px">Semak ✔</button>`;
 }
 
-function bindArrange(q, next) {
+function bindArrange(q, next, profileId) {
   const pool   = document.getElementById('arrange-pool');
   const answer = document.getElementById('arrange-answer');
 
@@ -233,6 +248,7 @@ function bindArrange(q, next) {
     const attempt = [...answer.querySelectorAll('.arrange-chip')]
       .map(c => c.dataset.word).join(' ');
     const isRight = attempt.trim() === q.answer.trim();
+    playFeedback(profileId, isRight);
     showToast(isRight ? '✅ Betul! Pandai!' : `❌ Jawapan: ${q.answer}`, isRight ? 'correct' : 'wrong');
     setTimeout(() => next(isRight), 1500);
   });
@@ -332,14 +348,16 @@ function buildSpeak(q) {
     </div>`;
 }
 
-function bindSpeak(q, next) {
+function bindSpeak(q, next, profileId) {
   const isAr = q.lang === 'ar';
   const isEn = q.lang === 'en';
   document.getElementById('btn-betul').addEventListener('click', () => {
+    playFeedback(profileId, true);
     showToast(isAr ? '✅ Tahniah! Teruskan!' : isEn ? '✅ Well done!' : '✅ Bagus! Teruskan!', 'correct');
     setTimeout(() => next(true), 900);
   });
   document.getElementById('btn-salah').addEventListener('click', () => {
+    playFeedback(profileId, false);
     showToast(isAr ? '💪 Cuba lagi!' : isEn ? '💪 Try again!' : '💪 Cuba lagi!', 'wrong');
     setTimeout(() => next(false), 900);
   });
