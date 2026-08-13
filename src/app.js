@@ -5,15 +5,34 @@ import { renderResult } from './pages/result.js';
 import { renderLogin, bindLogin }  from './pages/login.js';
 
 const state = {
-  screen:   'login',
-  subject:  null,
-  grade:    'tahun6',
-  topic:    null,
-  result:   null,
+  screen:     'login',
+  subject:    null,
+  grade:      'tahun6',
+  curriculum: 'main',
+  profile:    null,
+  topic:      null,
+  result:     null,
 };
+
+// Restore session if already logged in
+const saved = sessionStorage.getItem('edukid_profile');
+if (saved) {
+  try {
+    const p = JSON.parse(saved);
+    state.profile    = p;
+    state.grade      = p.grade;
+    state.curriculum = p.curriculum;
+    state.screen     = 'home';
+  } catch(_) {}
+}
 
 function navigate(screen, extra = {}) {
   Object.assign(state, { screen, ...extra });
+  // keep grade/curriculum in sync if profile changes
+  if (extra.profile) {
+    state.grade      = extra.profile.grade;
+    state.curriculum = extra.profile.curriculum;
+  }
   render();
 }
 
@@ -51,6 +70,14 @@ function bindEvents() {
       navigate(dest, dest === 'home' ? {} : { subject: state.subject });
     });
   });
+  // Logout
+  const logoutBtn = document.getElementById('btn-logout');
+  if (logoutBtn) logoutBtn.addEventListener('click', () => {
+    sessionStorage.removeItem('edukid_profile');
+    state.profile = null; state.grade = 'tahun6'; state.curriculum = 'main';
+    navigate('login');
+  });
+
   const retryBtn = document.getElementById('btn-retry');
   const homeBtn  = document.getElementById('btn-home');
   const nextBtn  = document.getElementById('btn-next');

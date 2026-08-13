@@ -1,9 +1,10 @@
-import { CURRICULUM, getTopicsForSubject } from '../data/curriculum.js';
+import { CURRICULUM, TADIKA_CURRICULUM, getTopicsForSubject } from '../data/curriculum.js';
 import { getTopicProgress } from '../data/progress.js';
 
 export function renderTopics(state, navigate) {
-  const subj   = CURRICULUM[state.subject];
-  const topics = getTopicsForSubject(state.subject, state.grade);
+  const currMap = state.curriculum === 'tadika' ? TADIKA_CURRICULUM : CURRICULUM;
+  const subj    = currMap[state.subject];
+  const topics  = getTopicsForSubject(state.subject, state.grade, state.curriculum);
 
   const topicRows = topics.length
     ? topics.map(topic => {
@@ -25,7 +26,9 @@ export function renderTopics(state, navigate) {
          <p style="margin-top:12px">Akan datang!</p>
        </div>`;
 
-  const gradeLabel = state.grade === 'tahun6' ? '6 Tahun' : 'Darjah 1';
+  const gradeLabel = state.curriculum === 'tadika' ? 'Yah 👧'
+                   : state.grade === 'tahun6'      ? '6 Tahun'
+                   :                                 'Darjah 1';
 
   return `
     <div class="screen active" id="screen-topics">

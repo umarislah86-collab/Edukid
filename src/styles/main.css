@@ -61,7 +61,63 @@ body {
   color: white;
 }
 
-/* ── Login Screen ── */
+/* ── Login: Profile pickers ── */
+.login-profiles {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.profile-pick {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  cursor: pointer; padding: 8px 12px; border-radius: 16px;
+  border: 3px solid transparent; transition: border-color .2s, transform .15s;
+}
+.profile-pick:hover  { transform: scale(1.05); }
+.profile-pick.active { border-color: var(--purple); background: #F0EEFF; }
+.profile-pick p      { font-size: 13px; font-weight: 700; color: var(--text); }
+.profile-pick-img {
+  width: 72px; height: 72px; border-radius: 50%;
+  object-fit: cover; object-position: center top;
+  border: 3px solid #E0E0F0;
+}
+.profile-pick-emoji {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: #FFF3E0; border: 3px solid #E0E0F0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px;
+}
+
+/* ── Home: avatar emoji (no photo) ── */
+.home-avatar-emoji {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: #FFF3E0; border: 3px solid var(--orange);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 44px; margin-bottom: 10px;
+}
+
+/* ── Logout button ── */
+.logout-btn {
+  margin-top: 8px; padding: 6px 14px;
+  border-radius: 50px; border: 2px solid #E0E0F0;
+  background: white; font-family: var(--font);
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  cursor: pointer; transition: all .15s;
+}
+.logout-btn:hover { border-color: var(--purple); color: var(--purple); }
+
+/* ── Tadika subject card colours ── */
+.subject-card.warna   { border-color: #FF6B9D; }
+.subject-card.bentuk  { border-color: #9B59B6; }
+.subject-card.nombor  { border-color: #3498DB; }
+.subject-card.haiwan  { border-color: #27AE60; }
+.subject-card.buah    { border-color: #E74C3C; }
+
+.subject-card.warna   .progress-fill { background: #FF6B9D; }
+.subject-card.bentuk  .progress-fill { background: #9B59B6; }
+.subject-card.nombor  .progress-fill { background: #3498DB; }
+.subject-card.haiwan  .progress-fill { background: #27AE60; }
+.subject-card.buah    .progress-fill { background: #E74C3C; }
 .login-screen {
   justify-content: flex-start;
   align-items: center;

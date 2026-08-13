@@ -1,33 +1,47 @@
-// Terima "aalaa" atau nama penuh — case-insensitive
-const CORRECT_NAMES = ["aalaa'", "aalaa", "alaa'", "alaa", "aalaa' binti abdullah umar"];
-const CORRECT_AGE   = "6";
+const PROFILES = {
+  aalaa: { id:'aalaa', name:"Aalaa'", age:6, photo:'public/aalaa.jpg', grade:'darjah1', curriculum:'main' },
+  yah:   { id:'yah',  name:'Yah',    age:3, photo:null,               grade:'tadika',  curriculum:'tadika' },
+};
+
+const NAME_MAP = {
+  "aalaa'": 'aalaa', "aalaa": 'aalaa', "alaa'": 'aalaa', "alaa": 'aalaa',
+  "aalaa' binti abdullah umar": 'aalaa',
+  "yah": 'yah', "ya": 'yah', "yah binti abdullah umar": 'yah',
+};
 
 export function renderLogin(navigate) {
   return `
     <div class="screen active login-screen">
-      <div class="login-photo-wrap">
-        <img src="public/aalaa.jpg" alt="Aalaa'" class="login-photo" />
+      <div class="login-profiles">
+        <div class="profile-pick" data-profile="aalaa">
+          <img src="public/aalaa.jpg" alt="Aalaa'" class="profile-pick-img" />
+          <p>Aalaa'</p>
+        </div>
+        <div class="profile-pick" data-profile="yah">
+          <div class="profile-pick-emoji">👧</div>
+          <p>Yah</p>
+        </div>
       </div>
       <h1 class="login-title">Jom Belajar! 🌟</h1>
       <p class="login-sub">Siapakah kamu? Eja nama kamu untuk masuk!</p>
 
       <div class="login-card">
         <div class="login-field">
-          <label>Nama penuh kamu:</label>
-          <input id="inp-name" type="text" placeholder="contoh: Aalaa'"
+          <label>Nama kamu:</label>
+          <input id="inp-name" type="text" placeholder="contoh: Aalaa' atau Yah"
             autocomplete="off" autocorrect="off" spellcheck="false" />
         </div>
         <div class="login-field">
           <label>Umur kamu:</label>
           <div class="age-row">
-            ${["4","5","6","7","8"].map(a => `
+            ${["3","4","5","6","7","8"].map(a => `
               <button class="age-btn" data-age="${a}">${a} tahun</button>
             `).join('')}
           </div>
         </div>
 
         <div id="login-error" class="login-error hidden">
-          ❌ Cuba lagi! Ejaan atau umur tidak tepat.
+          ❌ Cuba lagi! Nama atau umur tidak tepat.
         </div>
 
         <button class="btn-primary" id="btn-login" style="margin-top:20px">
@@ -40,6 +54,21 @@ export function renderLogin(navigate) {
 export function bindLogin(navigate) {
   let selectedAge = '';
 
+  // Profile avatar taps — auto-fill name + age
+  document.querySelectorAll('.profile-pick').forEach(pick => {
+    pick.addEventListener('click', () => {
+      const key = pick.dataset.profile;
+      const p   = PROFILES[key];
+      document.getElementById('inp-name').value = p.name;
+      document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('active'));
+      const ageBtn = [...document.querySelectorAll('.age-btn')]
+        .find(b => b.dataset.age === String(p.age));
+      if (ageBtn) { ageBtn.classList.add('active'); selectedAge = String(p.age); }
+      document.querySelectorAll('.profile-pick').forEach(x => x.classList.remove('active'));
+      pick.classList.add('active');
+    });
+  });
+
   document.querySelectorAll('.age-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('active'));
@@ -49,12 +78,15 @@ export function bindLogin(navigate) {
   });
 
   document.getElementById('btn-login').addEventListener('click', () => {
-    const name = document.getElementById('inp-name').value.trim().toLowerCase();
-    const err  = document.getElementById('login-error');
+    const name    = document.getElementById('inp-name').value.trim().toLowerCase();
+    const err     = document.getElementById('login-error');
+    const profKey = NAME_MAP[name];
+    const profile = profKey ? PROFILES[profKey] : null;
 
-    if (CORRECT_NAMES.includes(name) && selectedAge === CORRECT_AGE) {
+    if (profile && selectedAge === String(profile.age)) {
       err.classList.add('hidden');
-      navigate('home');
+      sessionStorage.setItem('edukid_profile', JSON.stringify(profile));
+      navigate('home', { profile });
     } else {
       err.classList.remove('hidden');
       document.getElementById('inp-name').classList.add('shake');
@@ -62,7 +94,6 @@ export function bindLogin(navigate) {
     }
   });
 
-  // Allow Enter key on input
   document.getElementById('inp-name').addEventListener('keydown', e => {
     if (e.key === 'Enter') document.getElementById('btn-login').click();
   });
