@@ -280,6 +280,9 @@ function autoSpeak(text) {
     setTimeout(doSpeak, 180);
   }
 }
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+function showToast(msg, type) {
   const t = document.getElementById('feedback-toast');
   if (!t) return;
   t.textContent = msg;
