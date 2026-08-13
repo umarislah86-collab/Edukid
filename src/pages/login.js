@@ -52,6 +52,7 @@ export function renderLogin(navigate) {
           Masuk ▶
         </button>
       </div>
+      <p style="margin-top:24px;font-size:11px;color:#B0B0C8;text-align:center">v1.001</p>
     </div>`;
 }
 
