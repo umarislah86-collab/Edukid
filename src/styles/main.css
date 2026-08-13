@@ -106,6 +106,13 @@ body {
 }
 .logout-btn:hover { border-color: var(--purple); color: var(--purple); }
 
+/* ── Parent mode section label ── */
+.section-label {
+  font-size: 14px; font-weight: 800; color: var(--muted);
+  margin: 20px 0 10px; padding-left: 4px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
 /* ── Tadika subject card colours ── */
 .subject-card.kira      { border-color: #3498DB; }
 .subject-card.warna     { border-color: #FF6B9D; }

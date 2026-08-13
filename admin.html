@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — Jom Belajar</title>
+  <title>Admin — EduKid</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,48 +15,34 @@
     }
     body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    /* ── Login ── */
-    #login-screen {
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; min-height: 100vh; padding: 24px;
-    }
-    #login-screen h1 { font-size: 26px; font-weight: 800; color: var(--purple); margin-bottom: 6px; }
-    #login-screen p  { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
-    .login-box {
-      background: var(--card); border-radius: var(--radius);
-      box-shadow: var(--shadow); padding: 32px 28px; width: 100%; max-width: 360px;
-    }
-    .login-box label { display: block; font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 8px; }
-    .login-box input {
-      width: 100%; padding: 13px 16px; border: 2px solid #E0E0F0;
-      border-radius: 12px; font-family: 'Nunito', sans-serif; font-size: 15px;
-      outline: none; margin-bottom: 16px;
-    }
-    .login-box input:focus { border-color: var(--purple); }
-    .btn {
-      width: 100%; padding: 14px; background: var(--purple); color: white;
-      border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
-      font-size: 15px; font-weight: 800; cursor: pointer;
-    }
-    .btn:hover { opacity: .9; }
-    .err { color: var(--red); font-size: 13px; font-weight: 700; margin-top: 10px; text-align: center; display: none; }
-
     /* ── Dashboard ── */
-    #dashboard { display: none; padding: 24px; max-width: 900px; margin: 0 auto; }
+    #dashboard { padding: 24px; max-width: 960px; margin: 0 auto; }
 
     .dash-header {
       display: flex; align-items: center; gap: 14px;
       background: var(--purple); border-radius: var(--radius);
-      padding: 20px 24px; color: white; margin-bottom: 24px;
+      padding: 20px 24px; color: white; margin-bottom: 16px;
     }
     .dash-header img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; object-position: top; border: 3px solid white; }
     .dash-header h1  { font-size: 20px; font-weight: 800; }
     .dash-header p   { font-size: 13px; opacity: .85; }
-    .dash-header .logout {
-      margin-left: auto; background: rgba(255,255,255,.2); border: none;
-      color: white; font-family: 'Nunito', sans-serif; font-size: 13px;
-      font-weight: 700; padding: 8px 16px; border-radius: 50px; cursor: pointer;
+    .dash-header .header-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .btn-reset {
+      background: rgba(255,77,109,0.85); border: none; color: white;
+      font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700;
+      padding: 8px 14px; border-radius: 50px; cursor: pointer; transition: opacity .15s;
     }
+    .btn-reset:hover { opacity: .85; }
+
+    /* ── Profile Tabs ── */
+    .profile-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .profile-tab {
+      padding: 10px 22px; border-radius: 50px; border: 2px solid #E0E0F0;
+      background: white; font-family: 'Nunito', sans-serif;
+      font-size: 14px; font-weight: 700; cursor: pointer; transition: all .15s;
+    }
+    .profile-tab.active { background: var(--purple); color: white; border-color: var(--purple); }
+    .profile-tab:hover:not(.active) { border-color: var(--purple); color: var(--purple); }
 
     /* ── Stat cards ── */
     .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-bottom: 24px; }
@@ -69,7 +55,7 @@
 
     /* ── Subject breakdown ── */
     .section-title { font-size: 16px; font-weight: 800; margin-bottom: 12px; }
-    .subj-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .subj-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px; }
     .subj-card {
       background: var(--card); border-radius: var(--radius);
       box-shadow: var(--shadow); padding: 16px;
@@ -107,9 +93,18 @@
       display: inline-block; padding: 3px 10px; border-radius: 50px;
       font-size: 11px; font-weight: 700;
     }
-    .badge-bm       { background: #EDE9FF; color: var(--purple); }
-    .badge-matematik{ background: #FFF3E8; color: var(--orange); }
-    .badge-sains    { background: #E8FFF3; color: var(--green);  }
+    .badge-bm        { background: #EDE9FF; color: var(--purple); }
+    .badge-matematik { background: #FFF3E8; color: var(--orange); }
+    .badge-sains     { background: #E8FFF3; color: var(--green);  }
+    .badge-english   { background: #FFE8F5; color: #E91E8C;       }
+    .badge-iqra      { background: #E8FAF5; color: #1ABC9C;       }
+    .badge-kira      { background: #EAF4FF; color: #3498DB;       }
+    .badge-warna     { background: #FFF0F5; color: #FF6B9D;       }
+    .badge-haiwan    { background: #E8F8EF; color: #27AE60;       }
+    .badge-padanan   { background: #F5EEF8; color: #9B59B6;       }
+    .badge-kenderaan { background: #FEF0EE; color: #E74C3C;       }
+    .badge-aalaa     { background: #EDE9FF; color: var(--purple); }
+    .badge-yah       { background: #FFF3E8; color: var(--orange); }
 
     .stars { color: #FFD60A; letter-spacing: 2px; }
 
@@ -155,17 +150,23 @@
 </head>
 <body>
 
-<!-- ── Dashboard terus, tanpa login ── -->
-
-<!-- ── Dashboard ── -->
-<div id="dashboard" style="display:block">
+<div id="dashboard">
   <div class="dash-header">
-    <img src="public/aalaa.jpg" alt="Aalaa'" />
+    <img src="public/aalaa.jpg" alt="EduKid" />
     <div>
-      <h1>Rekod Aalaa'</h1>
+      <h1>Rekod EduKid</h1>
       <p id="dash-date">Memuatkan...</p>
     </div>
-    <button class="logout" id="btn-logout" style="display:none">Log Keluar</button>
+    <div class="header-actions">
+      <button class="btn-reset" id="btn-reset">🗑️ Reset Data</button>
+    </div>
+  </div>
+
+  <!-- Profile filter tabs -->
+  <div class="profile-tabs">
+    <button class="profile-tab active" data-profile="">👥 Semua</button>
+    <button class="profile-tab" data-profile="aalaa">👧 Aalaa'</button>
+    <button class="profile-tab" data-profile="yah">👶 Yah</button>
   </div>
 
   <div class="stats-row" id="stats-row">
@@ -193,11 +194,19 @@
         <option value="bm">Bahasa Malaysia</option>
         <option value="matematik">Matematik</option>
         <option value="sains">Sains</option>
+        <option value="english">English</option>
+        <option value="iqra">Iqra</option>
+        <option value="kira">Kira-Kira</option>
+        <option value="warna">Teka Warna</option>
+        <option value="haiwan">Haiwan & Bunyi</option>
+        <option value="padanan">Cari Pasangan</option>
+        <option value="kenderaan">Kenderaan</option>
       </select>
       <select id="flt-grade">
         <option value="">Semua Peringkat</option>
         <option value="tahun6">6 Tahun</option>
         <option value="darjah1">Darjah 1</option>
+        <option value="tadika">Tadika</option>
       </select>
       <input type="text" id="flt-search" placeholder="Cari topik..." />
       <button class="btn-export" id="btn-export">⬇ Export CSV</button>
@@ -207,6 +216,7 @@
       <thead>
         <tr>
           <th data-col="timestamp">Tarikh & Masa ↕</th>
+          <th data-col="profile">Profil</th>
           <th data-col="subject">Subjek</th>
           <th data-col="grade">Peringkat</th>
           <th data-col="topicTitle">Topik</th>
@@ -216,7 +226,7 @@
         </tr>
       </thead>
       <tbody id="records-body">
-        <tr><td colspan="7" class="loading">⏳ Memuatkan rekod...</td></tr>
+        <tr><td colspan="8" class="loading">⏳ Memuatkan rekod...</td></tr>
       </tbody>
     </table>
   </div>
@@ -245,6 +255,7 @@
         <thead>
           <tr>
             <th>Tarikh & Masa</th>
+            <th>Profil</th>
             <th>Jenis</th>
             <th>Topik / Nota</th>
             <th>Minit</th>
@@ -252,7 +263,7 @@
           </tr>
         </thead>
         <tbody id="st-body">
-          <tr><td colspan="5" class="loading">⏳ Memuatkan...</td></tr>
+          <tr><td colspan="6" class="loading">⏳ Memuatkan...</td></tr>
         </tbody>
       </table>
     </div>
@@ -262,9 +273,9 @@
 
 <script type="module">
 import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, doc, setDoc, getDoc, query, orderBy, serverTimestamp }
+import { getFirestore, collection, getDocs, addDoc, doc, setDoc, getDoc,
+         deleteDoc, query, orderBy, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 
 const firebaseConfig = {
   apiKey:        "AIzaSyC6TbStfWv2lE3qvQxf8WMsUJNlhVMpc_Q",
@@ -277,39 +288,66 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig, "edukid-admin");
 const db  = getFirestore(app);
 
-const SUBJ_LABEL = { bm: "Bahasa Malaysia", matematik: "Matematik", sains: "Sains" };
-const SUBJ_COLOR = { bm: "#6C63FF", matematik: "#FF8C42", sains: "#2ECC71" };
-const GRADE_LABEL = { tahun6: "6 Tahun", darjah1: "Darjah 1" };
+const SUBJ_LABEL = {
+  bm: "Bahasa Malaysia", matematik: "Matematik", sains: "Sains",
+  english: "English", iqra: "Iqra",
+  kira: "Kira-Kira", warna: "Teka Warna", haiwan: "Haiwan & Bunyi",
+  padanan: "Cari Pasangan", kenderaan: "Kenderaan"
+};
+const SUBJ_COLOR = {
+  bm: "#6C63FF", matematik: "#FF8C42", sains: "#2ECC71",
+  english: "#E91E8C", iqra: "#1ABC9C",
+  kira: "#3498DB", warna: "#FF6B9D", haiwan: "#27AE60",
+  padanan: "#9B59B6", kenderaan: "#E74C3C"
+};
+const GRADE_LABEL = { tahun6: "6 Tahun", darjah1: "Darjah 1", tadika: "Tadika" };
+const PROFILE_LABEL = { aalaa: "Aalaa' 👧", yah: "Yah 👶" };
 
-let allRecords = [];
-let sortCol = "timestamp", sortAsc = false;
+let allRecords  = [];
+let sortCol     = "timestamp";
+let sortAsc     = false;
+let activeProfile = '';   // '' = all, 'aalaa', 'yah'
 
-// ── Auto-load terus ───────────────────────────────────────────────
-document.getElementById("dash-date").textContent = "Hari ini: " + new Date().toLocaleDateString("ms-MY", { weekday:"long", year:"numeric", month:"long", day:"numeric" });
+document.getElementById("dash-date").textContent =
+  "Hari ini: " + new Date().toLocaleDateString("ms-MY", { weekday:"long", year:"numeric", month:"long", day:"numeric" });
+
 loadRecords();
 
-document.getElementById("btn-logout").addEventListener("click", () => {
-  document.getElementById("login-screen").style.display = "flex";
-  document.getElementById("dashboard").style.display = "none";
-  document.getElementById("inp-pw").value = "";
+// ── Profile tabs ──────────────────────────────────────────────────
+document.querySelectorAll(".profile-tab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".profile-tab").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    activeProfile = btn.dataset.profile;
+    renderStats();
+    renderSubjects();
+    renderTable();
+  });
 });
 
 // ── Load Firestore ────────────────────────────────────────────────
 async function loadRecords() {
   const q    = query(collection(db, "edukid_progress"), orderBy("timestamp", "desc"));
   const snap = await getDocs(q);
-  allRecords = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  allRecords  = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   renderStats();
   renderSubjects();
   renderTable();
 }
 
+// Returns records filtered by the active profile tab only
+function profileFiltered() {
+  if (!activeProfile) return allRecords;
+  return allRecords.filter(r => (r.profile || 'aalaa') === activeProfile);
+}
+
 // ── Stats ─────────────────────────────────────────────────────────
 function renderStats() {
-  const total   = allRecords.length;
-  const stars   = allRecords.reduce((s, r) => s + (r.stars || 0), 0);
-  const avg     = total ? Math.round(allRecords.reduce((s, r) => s + (r.percentage || 0), 0) / total) : 0;
-  const perfect = allRecords.filter(r => r.percentage === 100).length;
+  const recs    = profileFiltered();
+  const total   = recs.length;
+  const stars   = recs.reduce((s, r) => s + (r.stars || 0), 0);
+  const avg     = total ? Math.round(recs.reduce((s, r) => s + (r.percentage || 0), 0) / total) : 0;
+  const perfect = recs.filter(r => r.percentage === 100).length;
 
   document.getElementById("st-total").textContent   = total;
   document.getElementById("st-stars").textContent   = "⭐ " + stars;
@@ -319,19 +357,33 @@ function renderStats() {
 
 // ── Subject breakdown ─────────────────────────────────────────────
 function renderSubjects() {
-  const subjects = ["bm", "matematik", "sains"];
+  const recs = profileFiltered();
+
+  // Determine which subjects to show based on active profile
+  let subjects;
+  if (activeProfile === 'yah') {
+    subjects = ["kira","warna","haiwan","padanan","kenderaan"];
+  } else if (activeProfile === 'aalaa') {
+    subjects = ["bm","matematik","sains","english","iqra"];
+  } else {
+    // Show all subjects that have any records
+    const seen = new Set(recs.map(r => r.subject).filter(Boolean));
+    subjects = Object.keys(SUBJ_LABEL).filter(s => seen.has(s));
+    if (!subjects.length) subjects = ["bm","matematik","sains","english","iqra"];
+  }
+
   const html = subjects.map(s => {
-    const recs  = allRecords.filter(r => r.subject === s);
-    const avg   = recs.length ? Math.round(recs.reduce((a, r) => a + (r.percentage || 0), 0) / recs.length) : 0;
-    const color = SUBJ_COLOR[s];
+    const subRecs = recs.filter(r => r.subject === s);
+    const avg     = subRecs.length ? Math.round(subRecs.reduce((a, r) => a + (r.percentage || 0), 0) / subRecs.length) : 0;
+    const color   = SUBJ_COLOR[s] || "#6C63FF";
     return `
       <div class="subj-card">
-        <h3>${SUBJ_LABEL[s]}</h3>
+        <h3>${SUBJ_LABEL[s] || s}</h3>
         <div class="bar-track"><div class="bar-fill" style="width:${avg}%;background:${color}"></div></div>
-        <p>Purata: <strong>${avg}%</strong> &nbsp;|&nbsp; ${recs.length} latihan</p>
+        <p>Purata: <strong>${avg}%</strong> &nbsp;|&nbsp; ${subRecs.length} latihan</p>
       </div>`;
   }).join("");
-  document.getElementById("subj-row").innerHTML = html;
+  document.getElementById("subj-row").innerHTML = html || `<p style="color:var(--muted);padding:12px">Tiada data lagi.</p>`;
 }
 
 // ── Table ─────────────────────────────────────────────────────────
@@ -339,7 +391,7 @@ function filtered() {
   const subj   = document.getElementById("flt-subject").value;
   const grade  = document.getElementById("flt-grade").value;
   const search = document.getElementById("flt-search").value.toLowerCase();
-  return allRecords.filter(r =>
+  return profileFiltered().filter(r =>
     (!subj   || r.subject === subj) &&
     (!grade  || r.grade   === grade) &&
     (!search || (r.topicTitle || "").toLowerCase().includes(search))
@@ -355,17 +407,19 @@ function renderTable() {
 
   if (!rows.length) {
     document.getElementById("records-body").innerHTML =
-      `<tr><td colspan="7" class="empty"><div>📭</div>Tiada rekod lagi.</td></tr>`;
+      `<tr><td colspan="8" class="empty"><div>📭</div>Tiada rekod lagi.</td></tr>`;
     return;
   }
 
   document.getElementById("records-body").innerHTML = rows.map(r => {
-    const ts    = r.timestamp?.seconds ? new Date(r.timestamp.seconds * 1000).toLocaleString("ms-MY") : "—";
-    const stars = "⭐".repeat(r.stars || 0) + "☆".repeat(3 - (r.stars || 0));
-    const subj  = r.subject || "";
+    const ts     = r.timestamp?.seconds ? new Date(r.timestamp.seconds * 1000).toLocaleString("ms-MY") : "—";
+    const stars  = "⭐".repeat(r.stars || 0) + "☆".repeat(3 - (r.stars || 0));
+    const subj   = r.subject || "";
+    const prof   = r.profile || 'aalaa';
     return `
       <tr>
         <td>${ts}</td>
+        <td><span class="badge badge-${prof}">${PROFILE_LABEL[prof] || prof}</span></td>
         <td><span class="badge badge-${subj}">${SUBJ_LABEL[subj] || subj}</span></td>
         <td>${GRADE_LABEL[r.grade] || r.grade || "—"}</td>
         <td>${r.topicTitle || r.topicId || "—"}</td>
@@ -392,17 +446,18 @@ document.querySelectorAll("th[data-col]").forEach(th => {
 
 // ── Export CSV ────────────────────────────────────────────────────
 document.getElementById("btn-export").addEventListener("click", () => {
-  const rows = filtered();
-  const header = ["Tarikh","Subjek","Peringkat","Topik","Betul","Jumlah","%","Bintang"];
+  const rows   = filtered();
+  const header = ["Tarikh","Profil","Subjek","Peringkat","Topik","Betul","Jumlah","%","Bintang"];
   const lines  = rows.map(r => {
-    const ts = r.timestamp?.seconds ? new Date(r.timestamp.seconds * 1000).toLocaleString("ms-MY") : "";
-    return [ts, SUBJ_LABEL[r.subject]||r.subject, GRADE_LABEL[r.grade]||r.grade,
+    const ts   = r.timestamp?.seconds ? new Date(r.timestamp.seconds * 1000).toLocaleString("ms-MY") : "";
+    const prof = PROFILE_LABEL[r.profile || 'aalaa'] || r.profile || 'aalaa';
+    return [ts, prof, SUBJ_LABEL[r.subject]||r.subject, GRADE_LABEL[r.grade]||r.grade,
             r.topicTitle, r.correct, r.total, r.percentage, r.stars].join(",");
   });
   const blob = new Blob([[header, ...lines].join("\n")], { type: "text/csv" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "rekod-aalaa.csv";
+  const a    = document.createElement("a");
+  a.href     = URL.createObjectURL(blob);
+  a.download = `rekod-edukid${activeProfile ? '-' + activeProfile : ''}.csv`;
   a.click();
 });
 
@@ -421,36 +476,38 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
 let stBalance = 0;
 
 async function loadScreentime() {
-  // get balance from Firestore meta doc
   try {
     const snap = await getDoc(doc(db, "edukid_meta", "screentime"));
     stBalance  = snap.exists() ? (snap.data().balance || 0) : 0;
   } catch { stBalance = 0; }
   document.getElementById("st-bal").textContent = stBalance;
 
-  // load log
   const q    = query(collection(db, "edukid_screentime"), orderBy("timestamp","desc"));
   const snap = await getDocs(q);
   const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
   if (!rows.length) {
     document.getElementById("st-body").innerHTML =
-      `<tr><td colspan="5" class="empty"><div>📭</div>Tiada rekod lagi.</td></tr>`;
+      `<tr><td colspan="6" class="empty"><div>📭</div>Tiada rekod lagi.</td></tr>`;
     return;
   }
 
   document.getElementById("st-body").innerHTML = rows.map(r => {
-    const ts    = r.timestamp?.seconds ? new Date(r.timestamp.seconds*1000).toLocaleString("ms-MY") : "—";
-    const isEarned = r.type === "earned";
-    const badge    = isEarned
+    const ts        = r.timestamp?.seconds ? new Date(r.timestamp.seconds*1000).toLocaleString("ms-MY") : "—";
+    const isEarned  = r.type === "earned";
+    const badge     = isEarned
       ? `<span class="badge badge-earned">✅ Dapat</span>`
       : `<span class="badge badge-spent">📺 Guna</span>`;
-    const topic  = r.topicTitle || r.note || "—";
-    const minVal = isEarned ? `+${r.minutesEarned}` : `-${r.minutesSpent}`;
-    const color  = isEarned ? "var(--green)" : "var(--orange)";
+    const profBadge = r.profile
+      ? `<span class="badge badge-${r.profile}">${PROFILE_LABEL[r.profile] || r.profile}</span>`
+      : `<span class="badge badge-aalaa">Aalaa' 👧</span>`;
+    const topic     = r.topicTitle || r.note || "—";
+    const minVal    = isEarned ? `+${r.minutesEarned}` : `-${r.minutesSpent}`;
+    const color     = isEarned ? "var(--green)" : "var(--orange)";
     return `
       <tr>
         <td>${ts}</td>
+        <td>${profBadge}</td>
         <td>${badge}</td>
         <td>${topic}</td>
         <td style="font-weight:800;color:${color}">${minVal} min</td>
@@ -480,7 +537,7 @@ document.querySelectorAll(".btn-spend[data-min]").forEach(btn => {
   btn.addEventListener("click", () => {
     const min = Number(btn.dataset.min);
     if (stBalance < min) { alert(`Baki tak cukup! Baki sekarang: ${stBalance} minit.`); return; }
-    if (confirm(`Guna ${min} minit untuk Aalaa'?`)) spendMinutes(min, `Masa bebas ${min} minit`);
+    if (confirm(`Guna ${min} minit masa bebas?`)) spendMinutes(min, `Masa bebas ${min} minit`);
   });
 });
 
@@ -488,7 +545,47 @@ document.getElementById("btn-custom-spend").addEventListener("click", () => {
   const min = Number(document.getElementById("custom-min").value);
   if (!min || min < 1) { alert("Masukkan bilangan minit yang sah."); return; }
   if (stBalance < min) { alert(`Baki tak cukup! Baki sekarang: ${stBalance} minit.`); return; }
-  if (confirm(`Guna ${min} minit untuk Aalaa'?`)) spendMinutes(min, `Masa bebas ${min} minit`);
+  if (confirm(`Guna ${min} minit masa bebas?`)) spendMinutes(min, `Masa bebas ${min} minit`);
+});
+
+// ── Reset All Data ────────────────────────────────────────────────
+document.getElementById("btn-reset").addEventListener("click", async () => {
+  if (!confirm("⚠️ AMARAN: Ini akan PADAM semua rekod latihan dan masa bebas!\n\nTeruskan?")) return;
+  if (!confirm("Betul-betul nak padam? Tindakan ini TIDAK BOLEH dibatalkan!")) return;
+
+  document.getElementById("btn-reset").textContent = "⏳ Memadamkan...";
+  document.getElementById("btn-reset").disabled = true;
+
+  try {
+    // Delete all progress records
+    const progressSnap = await getDocs(collection(db, "edukid_progress"));
+    await Promise.all(progressSnap.docs.map(d => deleteDoc(d.ref)));
+
+    // Delete all screentime records
+    const stSnap = await getDocs(collection(db, "edukid_screentime"));
+    await Promise.all(stSnap.docs.map(d => deleteDoc(d.ref)));
+
+    // Reset balance meta doc
+    await setDoc(doc(db, "edukid_meta", "screentime"), {
+      balance: 0, updatedAt: serverTimestamp()
+    });
+
+    allRecords = [];
+    stBalance  = 0;
+    renderStats();
+    renderSubjects();
+    renderTable();
+    document.getElementById("st-bal").textContent = "0";
+    document.getElementById("st-body").innerHTML =
+      `<tr><td colspan="6" class="empty"><div>📭</div>Tiada rekod lagi.</td></tr>`;
+
+    alert("✅ Semua data berjaya dipadam!");
+  } catch (e) {
+    alert("❌ Gagal padam data: " + e.message);
+  } finally {
+    document.getElementById("btn-reset").textContent = "🗑️ Reset Data";
+    document.getElementById("btn-reset").disabled = false;
+  }
 });
 </script>
 </body>

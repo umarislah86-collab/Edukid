@@ -12,11 +12,16 @@ export function getProgress()          { return load(); }
 export function getTopicProgress(id)   { return load()[id] || null; }
 
 export function saveTopicResult(topicId, correct, total, meta = {}) {
-  const data = load();
-  const prev = data[topicId] || { attempts: 0, bestScore: 0, stars: 0 };
-  const pct  = Math.round((correct / total) * 100);
+  const pct   = Math.round((correct / total) * 100);
   const stars = pct >= 80 ? 3 : pct >= 60 ? 2 : pct >= 40 ? 1 : 0;
 
+  // Parent profile — preview only, nothing saved
+  if (meta.profile === 'ayah') {
+    return { attempts: 1, bestScore: pct, stars, lastPlayed: Date.now() };
+  }
+
+  const data = load();
+  const prev = data[topicId] || { attempts: 0, bestScore: 0, stars: 0 };
   data[topicId] = {
     attempts:   prev.attempts + 1,
     bestScore:  Math.max(prev.bestScore, pct),
@@ -31,7 +36,8 @@ export function saveTopicResult(topicId, correct, total, meta = {}) {
     topicId,
     topicTitle: meta.topicTitle || topicId,
     grade:      meta.grade      || '',
-    correct, total, stars
+    correct, total, stars,
+    profile:    meta.profile    || 'aalaa',
   });
 
   return data[topicId];

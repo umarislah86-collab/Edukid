@@ -33,6 +33,10 @@ function navigate(screen, extra = {}) {
     state.grade      = extra.profile.grade;
     state.curriculum = extra.profile.curriculum;
   }
+  // Restore parent curriculum when returning to home
+  if (screen === 'home' && state.profile?.id === 'ayah') {
+    state.curriculum = 'parent';
+  }
   render();
 }
 
@@ -56,7 +60,11 @@ function bindEvents() {
     });
   });
   document.querySelectorAll('.subject-card').forEach(card => {
-    card.addEventListener('click', () => navigate('topics', { subject: card.dataset.subject }));
+    card.addEventListener('click', () => {
+      const curriculum = card.dataset.curriculum || state.curriculum;
+      const grade      = card.dataset.grade      || state.grade;
+      navigate('topics', { subject: card.dataset.subject, curriculum, grade });
+    });
   });
   document.querySelectorAll('.topic-item').forEach(item => {
     item.addEventListener('click', () => {

@@ -26,9 +26,10 @@ export function renderTopics(state, navigate) {
          <p style="margin-top:12px">Akan datang!</p>
        </div>`;
 
-  const gradeLabel = state.curriculum === 'tadika' ? 'Yah 👧'
-                   : state.grade === 'tahun6'      ? '6 Tahun'
-                   :                                 'Darjah 1';
+  const gradeLabel = state.curriculum === 'tadika'  ? 'Yah 👧'
+                   : state.profile?.id === 'ayah'   ? 'Ayah 👨 — Mode Cuba'
+                   : state.grade === 'tahun6'        ? '6 Tahun'
+                   :                                   'Darjah 1';
 
   return `
     <div class="screen active" id="screen-topics">

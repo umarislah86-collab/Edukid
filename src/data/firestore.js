@@ -15,13 +15,14 @@ const app = getApps().find(a => a.name === "edukid") || initializeApp(firebaseCo
 const db  = getFirestore(app);
 
 // Save one quiz attempt
-export async function saveAttempt({ subject, topicId, topicTitle, grade, correct, total, stars }) {
+export async function saveAttempt({ subject, topicId, topicTitle, grade, correct, total, stars, profile }) {
   try {
     await addDoc(collection(db, "edukid_progress"), {
       subject, topicId, topicTitle, grade,
       correct, total,
       percentage: Math.round((correct / total) * 100),
       stars,
+      profile: profile || 'aalaa',
       timestamp: serverTimestamp()
     });
   } catch (e) {

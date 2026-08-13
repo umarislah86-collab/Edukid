@@ -1,4 +1,4 @@
-const CACHE = 'edukid-v10';
+const CACHE = 'edukid-v11';
 const ASSETS = [
   '/Edukid/',
   '/Edukid/index.html',

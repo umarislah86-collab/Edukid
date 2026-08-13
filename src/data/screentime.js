@@ -50,13 +50,14 @@ export function spendBalance(minutes) {
 }
 
 // ── Save to Firestore (for admin tracking) ────────────────────────
-export async function recordEarned({ topicTitle, subject, grade, stars, minutesEarned, newBalance }) {
+export async function recordEarned({ topicTitle, subject, grade, stars, minutesEarned, newBalance, profile }) {
   try {
     const db = getDb();
     await addDoc(collection(db, "edukid_screentime"), {
       type: "earned",
       topicTitle, subject, grade, stars,
       minutesEarned, newBalance,
+      profile: profile || 'aalaa',
       timestamp: serverTimestamp()
     });
     // also update the running balance doc

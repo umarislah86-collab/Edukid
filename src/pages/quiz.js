@@ -30,21 +30,26 @@ function initQuiz(state, navigate) {
     current++;
     if (current < questions.length) renderQuestion();
     else {
+      const isParent      = state.profile?.id === 'ayah';
       const result        = saveTopicResult(state.topic.id, correct, questions.length, {
         subject:    state.subject,
         topicTitle: state.topic.title,
-        grade:      state.grade
-      });
-      const minutesEarned = calcEarned(result.stars);
-      const newBalance    = addBalance(minutesEarned);
-      const timeSpentMin  = Math.round((Date.now() - startTime) / 60000);
-      recordEarned({
-        topicTitle: state.topic.title,
-        subject:    state.subject,
         grade:      state.grade,
-        stars:      result.stars,
-        minutesEarned, newBalance
+        profile:    state.profile?.id || 'aalaa',
       });
+      const minutesEarned = isParent ? 0 : calcEarned(result.stars);
+      const newBalance    = isParent ? getBalance() : addBalance(minutesEarned);
+      const timeSpentMin  = Math.round((Date.now() - startTime) / 60000);
+      if (!isParent) {
+        recordEarned({
+          topicTitle:   state.topic.title,
+          subject:      state.subject,
+          grade:        state.grade,
+          stars:        result.stars,
+          minutesEarned, newBalance,
+          profile:      state.profile?.id || 'aalaa',
+        });
+      }
       navigate('result', {
         result: { correct, total: questions.length, ...result,
                   minutesEarned, newBalance, timeSpentMin }

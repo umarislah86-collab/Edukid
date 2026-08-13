@@ -1,12 +1,14 @@
 const PROFILES = {
   aalaa: { id:'aalaa', name:"Aalaa'", age:6, photo:'public/aalaa.jpg', grade:'darjah1', curriculum:'main' },
   yah:   { id:'yah',  name:'Yah',    age:3, photo:'public/yah.jpg',   grade:'tadika',  curriculum:'tadika' },
+  ayah:  { id:'ayah', name:'Ayah',   age:null, photo:null,             grade:'darjah1', curriculum:'parent' },
 };
 
 const NAME_MAP = {
   "aalaa'": 'aalaa', "aalaa": 'aalaa', "alaa'": 'aalaa', "alaa": 'aalaa',
   "aalaa' binti abdullah umar": 'aalaa',
   "yah": 'yah', "ya": 'yah', "yah binti abdullah umar": 'yah',
+  "ayah": 'ayah', "abah": 'ayah', "baba": 'ayah', "daddy": 'ayah', "papa": 'ayah',
 };
 
 export function renderLogin(navigate) {
@@ -14,8 +16,11 @@ export function renderLogin(navigate) {
     <div class="profile-pick" data-profile="${p.id}">
       ${p.photo
         ? `<img src="${p.photo}" alt="${p.name}" class="profile-pick-img" />`
-        : `<div class="profile-pick-emoji">👧</div>`}
+        : p.id === 'ayah'
+          ? `<div class="profile-pick-emoji" style="background:#E8F4FD;border-color:#3498DB;font-size:36px">👨</div>`
+          : `<div class="profile-pick-emoji">👧</div>`}
       <p>${p.name}</p>
+      ${p.id === 'ayah' ? '<p style="font-size:10px;color:#7B7B9A">Tekan untuk masuk</p>' : ''}
     </div>`).join('');
 
   return `
@@ -53,11 +58,20 @@ export function renderLogin(navigate) {
 export function bindLogin(navigate) {
   let selectedAge = '';
 
-  // Profile avatar taps — auto-fill name + age
+  // Profile avatar taps
   document.querySelectorAll('.profile-pick').forEach(pick => {
     pick.addEventListener('click', () => {
       const key = pick.dataset.profile;
       const p   = PROFILES[key];
+
+      // Parent: direct login, no form needed
+      if (p.id === 'ayah') {
+        sessionStorage.setItem('edukid_profile', JSON.stringify(p));
+        navigate('home', { profile: p });
+        return;
+      }
+
+      // Kids: auto-fill name + age in form
       document.getElementById('inp-name').value = p.name;
       document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('active'));
       const ageBtn = [...document.querySelectorAll('.age-btn')]
