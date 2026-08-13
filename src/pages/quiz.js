@@ -67,14 +67,7 @@ function initQuiz(state, navigate) {
     }
 
     // Auto-read question aloud for tadika (non-reading kids)
-    if (q.autoRead && q.readText && 'speechSynthesis' in window) {
-      speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(q.readText);
-      utter.lang  = 'ms-MY';
-      utter.rate  = 0.82;
-      utter.pitch = 1.15;
-      setTimeout(() => speechSynthesis.speak(utter), 250);
-    }
+    if (q.autoRead && q.readText) autoSpeak(q.readText);
   }
 
   renderQuestion();
@@ -82,13 +75,17 @@ function initQuiz(state, navigate) {
 
 // ─── MCQ ────────────────────────────────────────────────────────────────────
 function buildMCQ(q) {
-  const opts     = shuffle([...q.options]);
-  const isEmoji  = q.emoji;
+  const opts    = shuffle([...q.options]);
+  const isEmoji = q.emoji;
+  const replay  = isEmoji && q.readText
+    ? `<button class="btn-replay" id="btn-replay">🔊 Dengar lagi</button>`
+    : '';
   return `
     <div class="question-card pop">
       <p class="q-num">${isEmoji ? '👆 Pilih yang betul!' : 'Pilih jawapan yang betul'}</p>
       ${q.img ? `<div class="q-img">${q.img}</div>` : ''}
       <p class="q-text${isEmoji ? ' q-text--emoji' : ''}">${q.q}</p>
+      ${replay}
     </div>
     <div class="options-grid${isEmoji ? ' options-grid--emoji' : ''}">
       ${opts.map(o => `<button class="option-btn" data-answer="${o}">${o}</button>`).join('')}
@@ -96,6 +93,9 @@ function buildMCQ(q) {
 }
 
 function bindMCQ(q, next) {
+  const replayBtn = document.getElementById('btn-replay');
+  if (replayBtn) replayBtn.addEventListener('click', () => autoSpeak(q.readText));
+
   let answered = false;
   document.querySelectorAll('.option-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -233,8 +233,53 @@ function bindArrange(q, next) {
   });
 }
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
-function showToast(msg, type) {
+// ─── TTS — pick best available AI voice ──────────────────────────────────────
+// Voices load async in Chrome; cache after first pick
+let _bestVoice = undefined;
+
+function pickVoice() {
+  if (_bestVoice !== undefined) return _bestVoice;
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length) return (_bestVoice = null);
+
+  const find = fn => voices.find(fn);
+
+  // Priority order: Indonesian Google (AI-trained, reads Malay perfectly)
+  // → Malay voice → any Google → Apple/Microsoft quality voices → any English
+  _bestVoice =
+    find(v => v.lang.startsWith('id') && v.name.includes('Google')) ||
+    find(v => v.lang.startsWith('ms'))                               ||
+    find(v => v.lang.startsWith('id'))                               ||
+    find(v => v.name.includes('Google') && v.lang.startsWith('en')) ||
+    find(v => ['Samantha','Karen','Moira','Tessa'].some(n => v.name.includes(n))) ||
+    find(v => v.name.includes('Microsoft') && v.lang.startsWith('en')) ||
+    find(v => v.lang.startsWith('en'))                               ||
+    null;
+
+  return _bestVoice;
+}
+
+function autoSpeak(text) {
+  if (!text || !('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+
+  const doSpeak = () => {
+    const voice = pickVoice();
+    const utter = new SpeechSynthesisUtterance(text);
+    if (voice) { utter.voice = voice; utter.lang = voice.lang; }
+    else        { utter.lang = 'id-ID'; }
+    utter.rate  = 0.82;
+    utter.pitch = 1.05;
+    speechSynthesis.speak(utter);
+  };
+
+  // Chrome loads voices async — wait if not ready yet
+  if (speechSynthesis.getVoices().length === 0) {
+    speechSynthesis.addEventListener('voiceschanged', doSpeak, { once: true });
+  } else {
+    setTimeout(doSpeak, 180);
+  }
+}
   const t = document.getElementById('feedback-toast');
   if (!t) return;
   t.textContent = msg;
