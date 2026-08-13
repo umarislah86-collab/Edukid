@@ -21,9 +21,9 @@ function getDb() {
 const LOCAL_KEY = "edukid_screentime";
 
 // ── Earn minutes based on stars ───────────────────────────────────
-// 1-2 stars = 15 min, 3 stars = 30 min
+// 1-2 stars = 5 min, 3 stars = 15 min
 export function calcEarned(stars) {
-  return stars >= 3 ? 30 : stars >= 1 ? 15 : 0;
+  return stars >= 3 ? 15 : stars >= 1 ? 5 : 0;
 }
 
 // ── Local balance (fast, offline-safe) ───────────────────────────

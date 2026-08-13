@@ -235,7 +235,7 @@ function shuffle(arr) {
   return arr;
 }
 
-// ─── SPEAK (Baca Kuat — Web Speech API) ─────────────────────────────────────
+// ─── SPEAK (Baca Kuat — self-assess, works on all devices) ──────────────────
 const LEVEL_LABEL    = { 1:'2 suku kata', 2:'3 suku kata', 3:'4 suku kata', 4:'Baca ayat' };
 const LEVEL_LABEL_EN = { 1:'2 syllables', 2:'3 syllables', 3:'4 syllables', 4:'Read sentence' };
 const LEVEL_LABEL_AR = { 1:'huruf', 2:'perkataan', 3:'frasa', 4:'ayat' };
@@ -245,112 +245,34 @@ function buildSpeak(q) {
   const isEn   = q.lang === 'en';
   const lvlMap = isAr ? LEVEL_LABEL_AR : isEn ? LEVEL_LABEL_EN : LEVEL_LABEL;
   const lvlLbl = lvlMap[q.level] || '';
-  const tapLbl = isAr ? 'Ketik mikrofon dan baca kuat-kuat 🕌'
-               : isEn ? 'Tap mic and read aloud'
-               :        'Ketik mikrofon dan baca kuat-kuat';
-  const skipLbl = isEn ? 'Skip' : 'Langkau';
   const wordClass = isAr ? 'speak-word arabic-text' : 'speak-word';
-  const hintHtml = isAr && q.hint
-    ? `<p class="speak-hint">Rumi: <em>${q.hint}</em></p>` : '';
+  const hintHtml = q.hint
+    ? `<p class="speak-hint">${isAr ? 'Rumi:' : isEn ? 'Hint:' : 'Petunjuk:'} <em>${q.hint}</em></p>` : '';
+  const instruction = isAr ? 'Baca kuat-kuat, kemudian tekan ⬇️'
+                    : isEn ? 'Read aloud, then tap ⬇️'
+                    :        'Baca kuat-kuat, kemudian tekan ⬇️';
   return `
     <div class="question-card pop">
       <p class="q-num">${isAr ? '🕌 Mengaji —' : '🎤 Baca Kuat —'} ${lvlLbl}</p>
-      <p class="${wordClass}" id="speak-word">${q.word}</p>
+      <p class="${wordClass}">${q.word}</p>
       ${hintHtml}
+      <p class="speak-status" style="margin-top:14px;font-size:13px">${instruction}</p>
     </div>
-    <div class="speak-controls">
-      <button class="speak-mic-btn" id="btn-mic">🎤</button>
-      <p class="speak-status" id="speak-status">${tapLbl}</p>
-    </div>
-    <div class="speak-heard-wrap hidden" id="speak-heard-wrap">
-      <p class="speak-heard-label">${isEn ? 'You said:' : 'Kamu sebut:'}</p>
-      <p class="speak-heard" id="speak-heard"></p>
-    </div>
-    <button class="btn-secondary" id="btn-speak-skip" style="margin-top:12px">${skipLbl}</button>`;
+    <div class="self-assess-row">
+      <button class="assess-btn assess-betul" id="btn-betul">✅ Betul</button>
+      <button class="assess-btn assess-salah" id="btn-salah">❌ Salah</button>
+    </div>`;
 }
 
 function bindSpeak(q, next) {
   const isAr = q.lang === 'ar';
   const isEn = q.lang === 'en';
-  // Arabic speech recognition is unreliable on mobile; accept any attempt as correct
-  // so Aalaa' still gets rewarded for trying — teacher can assess live
-  const lang = isAr ? 'ar-SA' : isEn ? 'en-US' : 'ms-MY';
-
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    document.getElementById('speak-status').textContent =
-      isEn ? '⚠️ Browser not supported. Use Chrome.' : '⚠️ Guna Chrome atau Edge.';
-    document.getElementById('btn-mic').disabled = true;
-  }
-
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  let recognition = null;
-  let listening    = false;
-
-  document.getElementById('btn-mic').addEventListener('click', () => {
-    if (listening) return;
-    listening   = true;
-    recognition = new SpeechRecognition();
-    recognition.lang           = lang;
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 3;
-
-    const micBtn   = document.getElementById('btn-mic');
-    const statusEl = document.getElementById('speak-status');
-    micBtn.textContent   = '🔴';
-    micBtn.classList.add('listening');
-    statusEl.textContent = isEn ? 'Listening...' : 'Mendengar...';
-
-    recognition.start();
-
-    recognition.onresult = (e) => {
-      const alternatives = [...Array(e.results[0].length)]
-        .map((_, i) => e.results[0].item(i).transcript.toLowerCase().trim());
-
-      let isRight;
-      if (isAr) {
-        // For Arabic, accept any non-empty speech — mic-based self-assessment
-        isRight = alternatives.some(a => a.length > 0);
-      } else {
-        const target = q.word.toLowerCase().trim();
-        const clean  = s => s.replace(/[.,!?]/g,'').trim();
-        isRight = alternatives.some(a => clean(a) === clean(target) || similarity(clean(a), clean(target)) >= 0.75);
-      }
-
-      document.getElementById('speak-heard-wrap').classList.remove('hidden');
-      document.getElementById('speak-heard').textContent = alternatives[0];
-
-      micBtn.textContent = isRight ? '✅' : '❌';
-      micBtn.classList.remove('listening');
-      showToast(isRight
-        ? (isAr ? '✅ Tahniah! Teruskan!' : isEn ? '✅ Well done!' : '✅ Bagus! Sebutan betul!')
-        : (isAr ? `❌ Cuba lagi: ${q.hint||q.word}` : isEn ? `❌ Answer: ${q.word}` : `❌ Jawapan: ${q.word}`),
-        isRight ? 'correct' : 'wrong');
-      setTimeout(() => next(isRight), 1600);
-      listening = false;
-    };
-
-    recognition.onerror = () => {
-      micBtn.textContent = '🎤';
-      micBtn.classList.remove('listening');
-      statusEl.textContent = isEn ? 'Could not hear. Try again.' : 'Tak dapat dengar. Cuba lagi.';
-      listening = false;
-    };
-
-    recognition.onend = () => { if (listening) { listening = false; } };
+  document.getElementById('btn-betul').addEventListener('click', () => {
+    showToast(isAr ? '✅ Tahniah! Teruskan!' : isEn ? '✅ Well done!' : '✅ Bagus! Teruskan!', 'correct');
+    setTimeout(() => next(true), 900);
   });
-
-  document.getElementById('btn-speak-skip').addEventListener('click', () => {
-    if (recognition) try { recognition.stop(); } catch(_) {}
-    next(false);
+  document.getElementById('btn-salah').addEventListener('click', () => {
+    showToast(isAr ? '💪 Cuba lagi!' : isEn ? '💪 Try again!' : '💪 Cuba lagi!', 'wrong');
+    setTimeout(() => next(false), 900);
   });
-}
-
-// simple similarity — levenshtein ratio
-function similarity(a, b) {
-  const m = a.length, n = b.length;
-  if (!m || !n) return 0;
-  const dp = Array.from({length:m+1}, (_,i) => Array.from({length:n+1}, (_,j) => i||j));
-  for (let i=1;i<=m;i++) for (let j=1;j<=n;j++)
-    dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1] : 1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
-  return 1 - dp[m][n] / Math.max(m, n);
 }

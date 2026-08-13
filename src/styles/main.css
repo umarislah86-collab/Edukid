@@ -196,37 +196,41 @@ body {
   margin-top: 4px;
 }
 
-/* ── Speak (Baca Kuat) ── */
+/* ── Speak (Baca Kuat — self-assess) ── */
 .speak-word {
   font-size: 36px; font-weight: 800; color: var(--purple);
   margin: 16px 0 8px; letter-spacing: 2px; text-align: center;
 }
-.speak-controls {
-  display: flex; flex-direction: column; align-items: center; gap: 12px;
-  margin: 16px 0;
+.speak-status { font-size: 14px; color: var(--muted); font-weight: 600; }
+
+.self-assess-row {
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
 }
-.speak-mic-btn {
-  width: 90px; height: 90px; border-radius: 50%;
-  border: none; background: var(--purple);
-  font-size: 40px; cursor: pointer;
-  box-shadow: 0 6px 24px rgba(108,99,255,0.4);
+.assess-btn {
+  flex: 1;
+  padding: 22px 12px;
+  border-radius: var(--radius);
+  border: none;
+  font-family: var(--font);
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
   transition: transform .15s, box-shadow .15s;
 }
-.speak-mic-btn:hover   { transform: scale(1.08); }
-.speak-mic-btn:active  { transform: scale(0.95); }
-.speak-mic-btn.listening {
+.assess-betul {
+  background: var(--green);
+  color: white;
+  box-shadow: 0 4px 14px rgba(46,204,113,0.4);
+}
+.assess-salah {
   background: var(--red);
-  animation: pulse 1s infinite;
+  color: white;
+  box-shadow: 0 4px 14px rgba(255,77,109,0.4);
 }
-@keyframes pulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(255,77,109,0.5); }
-  50%      { box-shadow: 0 0 0 18px rgba(255,77,109,0); }
-}
-.speak-status { font-size: 14px; color: var(--muted); font-weight: 600; }
-.speak-heard-wrap { width:100%; text-align:center; margin-top:8px; }
-.speak-heard-wrap.hidden { display: none; }
-.speak-heard-label { font-size:12px; color:var(--muted); }
-.speak-heard { font-size:20px; font-weight:700; color:var(--text); margin-top:4px; }
+.assess-btn:hover  { transform: translateY(-3px); }
+.assess-btn:active { transform: scale(0.96); }
 
 /* ── Stats Bar ── */
 .stats-bar {
